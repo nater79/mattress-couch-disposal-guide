@@ -3,7 +3,7 @@
 import json,re,sys,urllib.request,os,glob
 BASE=os.environ.get("BASE","https://nater79.github.io/mattress-couch-disposal-guide/")
 SITE=os.path.join(os.path.dirname(__file__),"..","site")
-FOOTER=["Not affiliated with any city government","Information may be out of date","CONTACT EMAIL PLACEHOLDER"]
+FOOTER=["Not affiliated with any city government","Information may be out of date","navexiateam [at] navexia [dot] net"]
 CSP="Content-Security-Policy"; REF='name="referrer" content="strict-origin-when-cross-origin"'
 def get(u):
     try:
