@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nater79.github.io/mattress-couch-disposal-guide/sitemap.xml
