@@ -114,7 +114,7 @@ C = [
  "Items too big for your cart should be taken to a Convenience Center.",
  "Mattresses and box springs: up to 4 per month. There is a fee. See the Convenience Center page for prices.",
  "Furniture: one bulk item free, extra items have a fee. The city asks you to think about donating first."],[]),
-("washington-dc","Washington, DC","DC",702250,"DC Department of Public Works","https://dpw.dc.gov/service/bulk-trash-collection-0",[
+("washington-dc","Washington","DC",702250,"DC Department of Public Works","https://dpw.dc.gov/service/bulk-trash-collection-0",[
  "Bulk pickup is by appointment for homes and buildings with 3 or fewer units. Call 311 or use 311.dc.gov.",
  "No more than 7 items per appointment.",
  "Mattresses and box springs MUST be wrapped in plastic. Furniture is accepted.",
