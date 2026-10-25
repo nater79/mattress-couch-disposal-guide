@@ -24,9 +24,24 @@ CSS="""body{font-family:system-ui,sans-serif;max-width:760px;margin:auto;padding
 a{color:#0645ad}.disc{background:#fff8e1;border:1px solid #f0d27a;padding:.6em;font-size:.9em;margin:1em 0}
 .donate{background:#e8f5e9;border-left:5px solid #43a047;padding:.6em 1em}.check{background:#fdecea;padding:.6em 1em}
 .slot:empty{display:none}.label{background:#333;color:#fff;font-size:.8em;padding:1px 6px;border-radius:3px}footer{font-size:.85em;color:#555;border-top:1px solid #ddd;margin-top:2em;padding-top:1em}"""
+import json as _json, html as _html
+# Security headers (Counsel rule 14) - keep on every page. No inline styles/scripts allowed; JSON-LD is data, not executed.
+HEAD_SEC=("<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'\">"
+          '<meta name="referrer" content="strict-origin-when-cross-origin">')
+ROOT=BASE.rstrip("/")+"/"
+def jsonld(fn,title):
+    if fn=="index.html":
+        d={"@context":"https://schema.org","@type":"WebSite","name":_html.unescape(SITE),"url":ROOT,"inLanguage":"en-US"}
+    else:
+        crumb="About" if fn=="about.html" else _html.unescape(title.split(" in ",1)[-1].split(" (")[0])
+        d={"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+           {"@type":"ListItem","position":1,"name":_html.unescape(SITE),"item":ROOT},
+           {"@type":"ListItem","position":2,"name":crumb,"item":ROOT+fn}]}
+    return '<script type="application/ld+json">'+_json.dumps(d).replace("</","<\\/")+'</script>'
 def page(fn,title,desc,body):
-    open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{title}</title><meta name="description" content="{desc}"><link rel="stylesheet" href="style.css"></head><body>
+    canon=ROOT if fn=="index.html" else ROOT+fn
+    open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC}
+<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css">{jsonld(fn,title)}</head><body>
 <header><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a></header>
 {disc()}{SLOT('top-banner')}<main>{body}</main>{SLOT('footer-ad')}
 <footer><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}</footer></body></html>""")
