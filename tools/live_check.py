@@ -15,7 +15,7 @@ links=set()
 for f in files:
     s,h=get(BASE+f); r={"code":s}
     r["disc"]="ftc-disclosure" in h
-    m=re.search(r"<footer>(.*?)</footer>",h,re.S); r["footer"]=bool(m) and all(x in m.group(1) for x in FOOTER)
+    m=re.search(r"<footer[^>]*>(.*?)</footer>",h,re.S); r["footer"]=bool(m) and all(x in m.group(1) for x in FOOTER)
     r["csp"]=CSP in h and "script-src 'none'" in h; r["referrer"]=REF in h
     c=re.search(r'<link rel="canonical" href="([^"]+)"',h); exp=BASE if f=="index.html" else BASE+f
     r["canonical"]=bool(c) and c.group(1)==exp
