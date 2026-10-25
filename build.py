@@ -3,7 +3,7 @@ from cities import C, CHECKED
 BASE = os.environ.get("BASE","https://nater79.github.io/mattress-couch-disposal-guide")
 OUT="site"; os.makedirs(OUT,exist_ok=True)
 SITE="Bulky Item Guide"
-CONTACT="[CONTACT EMAIL PLACEHOLDER - not set up yet]"  # FLAG: Nate must supply a real contact address
+CONTACT="navexiateam [at] navexia [dot] net"  # FLAG: Nate must supply a real contact address
 # PAID: slot name -> dict(kind="Sponsored"|"Affiliate link", url=..., text=...). Fill only with real, approved deals.
 PAID={}
 BANNED=("recommended","best","top-rated","#1")
