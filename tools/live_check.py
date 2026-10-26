@@ -7,7 +7,7 @@ FOOTER=["Not affiliated with any city government","Information may be out of dat
 CSP="Content-Security-Policy"; REF='name="referrer" content="strict-origin-when-cross-origin"'
 def get(u):
     try:
-        r=urllib.request.urlopen(urllib.request.Request(u,headers={"User-Agent":"atlas-live-check"}),timeout=20); return r.status,r.read().decode()
+        r=urllib.request.urlopen(urllib.request.Request(u,headers={"User-Agent":"atlas-live-check"}),timeout=20); return r.status,r.read().decode("utf-8","replace")
     except urllib.error.HTTPError as e: return e.code,""
 fails=0; out=[]
 files=sorted(os.path.basename(f) for f in glob.glob(SITE+"/*.html"))

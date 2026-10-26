@@ -33,9 +33,11 @@ P["where-to-dump-a-couch-springfield-mo.html"]=("Where to dump a couch in Spring
 V=json.load(open(os.path.join(HERE,"videos.json")))
 vb=""
 for slug,(title,caps) in V.items():
+    HK={"bag-a-mattress":"Old mattress going out? Bag it the right way first.","couch-curbside":"Couch going to the curb? Do these five things first.","mattress-dropoff-springfield":"Dropping off a mattress in Springfield? Here's what you need to know."}
     tr="".join(f"<li>{c}</li>" for c in caps)
-    vb+=f'<section class="step step-city"><h2>{title}</h2><video controls preload="none" width="854" height="480" poster="img/video/{slug}.jpg" class="vid"><source src="img/video/{slug}.mp4" type="video/mp4">Your browser can\'t play this video. Read the steps below.</video><h3>Transcript (steps shown in the video)</h3><ol>{tr}</ol></section>'
-P["how-to-videos.html"]=("How-to videos: bag a mattress, set out a couch, Springfield drop-off","Short, silent how-to videos with captions: how to bag a mattress, get a couch ready for bulk pickup, and use Springfield, MO's mattress drop-off.",f"""<h1>How-to videos</h1><p class="lede">Short videos with captions and no sound. Each one has a written transcript under it. Facts come from the City of Springfield and Republic Services pages, checked {CK}.</p>{vb}<p>Sources:{S(M,"Springfield Mattress Recycling")}{S(L,"Noble Hill Landfill")}{S(REP,"Republic Services bulk pickup")}</p>{END}""")
+    tr=f'<p><em>Intro:</em> {HK[slug]} {title}</p><ol>{tr}</ol><p><em>Ending:</em> Find more local guides at Bulky Item Guide.</p>'
+    vb+=f'<section class="step step-city"><h2>{title}</h2><video controls preload="none" width="854" height="480" poster="img/video/{slug}.jpg" class="vid"><source src="img/video/{slug}.mp4" type="video/mp4">Your browser can\'t play this video. Read the steps below.</video><h3>Transcript (what the video says and shows)</h3>{tr}</section>'
+P["how-to-videos.html"]=("How-to videos: bag a mattress, set out a couch, Springfield drop-off","Short how-to videos with captions and a voiceover: how to bag a mattress, get a couch ready for bulk pickup, and use Springfield, MO's mattress drop-off.",f"""<h1>How-to videos</h1><p class="lede">Short videos with captions and a voiceover. Each one has a written transcript under it. Facts come from the City of Springfield and Republic Services pages, checked {CK}.</p>{vb}<p>Sources:{S(M,"Springfield Mattress Recycling")}{S(L,"Noble Hill Landfill")}{S(REP,"Republic Services bulk pickup")}</p>{END}""")
 
 open(f"{OUT}/style.css","a").write("\n.vid{max-width:100%;height:auto;display:block;background:#000;border-radius:8px}\n")
 os.makedirs(f"{OUT}/img/video",exist_ok=True)
