@@ -119,3 +119,5 @@ a:focus-visible,.btn:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
 @media (max-width:420px){.cards{grid-template-columns:1fr 1fr;gap:10px}.card{padding:14px}.nav a{padding:6px 10px;font-size:.9rem}}
 
 .related{margin:2rem 0;padding:1rem 1.25rem;border-top:2px solid #e5e7eb}.related ul{list-style:none;padding:0;display:grid;gap:.4rem}
+
+.vid{max-width:100%;height:auto;display:block;background:#000;border-radius:8px}
