@@ -81,7 +81,7 @@ def og(fn,title,desc,canon):
     t=_html.escape(_html.unescape(title),quote=True); d=_html.escape(_html.unescape(desc),quote=True)
     return (f'<meta property="og:type" content="{"website" if fn=="index.html" else "article"}"><meta property="og:site_name" content="{SITE}">'
             f'<meta property="og:title" content="{t}"><meta property="og:description" content="{d}"><meta property="og:url" content="{canon}">'
-            f'<meta property="og:image" content="{img}"><meta property="og:image:alt" content="Drawing of a city skyline with a small truck"><meta name="twitter:card" content="summary_large_image">')
+            f'<meta property="og:image" content="{img}"><meta property="og:image:alt" content="Bulky Item Guide logo"><meta name="twitter:card" content="summary_large_image">')
 def article(fn,title,desc,canon):
     if fn not in MOD: return ""
     d={"@context":"https://schema.org","@type":"Article","headline":_html.unescape(title)[:110],"description":_html.unescape(desc),
@@ -92,15 +92,17 @@ def page(fn,title,desc,body):
     body=herofy(fn,body)+REL.get(fn,"")
     canon=ROOT if fn=="index.html" else ROOT+fn
     open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC}
-<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
+<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css"><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="img/favicon-180.png">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><span class="brand-mark">{ico("pin")}</span>{SITE}</a>
+<header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>
 <nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
 <div class="wrap">{crumbs(fn,title)}{disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
-<footer class="site-footer"><div class="wrap"><p class="foot-brand"><span class="brand-mark">{ico("pin")}</span> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
+<footer class="site-footer"><div class="wrap"><p class="foot-brand"><img class="foot-logo" src="img/favicon-32.png" width="24" height="24" alt=""> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
 open(f"{OUT}/style.css","w").write(CSS)
 os.makedirs(f"{OUT}/img",exist_ok=True); open(f"{OUT}/img/skyline.svg","w").write(SKY)
-shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","og.png"),f"{OUT}/img/og.png")
+_I=os.path.join(os.path.dirname(os.path.abspath(__file__)),"img")
+for _f in ("og.png","logo-header.webp","logo-header.png","favicon-32.png","favicon-180.png"): shutil.copy(os.path.join(_I,_f),f"{OUT}/img/{_f}")
+shutil.copy(os.path.join(_I,"favicon.ico"),f"{OUT}/favicon.ico")
 DON="""<section class="step donate"><h2>Step 1: Can someone else use it? Donate first</h2>
 <p>If your couch or mattress is clean and in good shape, giving it away helps a neighbor and keeps it out of the landfill.</p>
 <ul><li>Offer it free to neighbors (Buy Nothing groups, Nextdoor, Facebook Marketplace, Craigslist "free").</li>

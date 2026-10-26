@@ -120,4 +120,7 @@ a:focus-visible,.btn:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
 
 .related{margin:2rem 0;padding:1rem 1.25rem;border-top:2px solid #e5e7eb}.related ul{list-style:none;padding:0;display:grid;gap:.4rem}
 
+.brand-logo{display:block;height:40px;width:auto}
+.foot-logo{vertical-align:middle;height:24px;width:24px}
+
 .vid{max-width:100%;height:auto;display:block;background:#000;border-radius:8px}
