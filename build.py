@@ -55,7 +55,7 @@ def page(fn,title,desc,body):
 <title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css">{jsonld(fn,title)}</head><body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">&#9851;</span>{SITE}</a>
-<nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
+<nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
 <div class="wrap">{crumbs(fn,title)}{disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
 <footer class="site-footer"><div class="wrap"><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
 open(f"{OUT}/style.css","w").write(CSS)
@@ -84,8 +84,48 @@ for slug,name,st,pop,agency,src,rules,notes in C:
 {SLOT('hauler-referral')}{SLOT('featured-local-hauler')}{SLOT('mattress-brand-haulaway')}</section>"""
     page(fn,f"Get rid of a mattress or couch in {name} ({CHECKED[:4]} city rules)",f"Free and low-cost ways to get rid of a mattress or couch in {name}: donate first, then official city pickup rules with a source link.",body)
     rows+=f'<li><a class="city" href="{fn}"><span class="cname">{name}, {st}</span>{"" if rules and not other else " <span class=\'pill pill-warn\'>(partly verified)</span>"}</a></li>'
+# --- Junk removal page: Springfield / Ozark, MO. Every fact read on the linked page on JCHECK. ---
+JCHECK="2026-10-26"
+SGF_M="https://www.springfieldmo.gov/5939/Mattress-Recycling"
+SGF_R="https://www.springfieldmo.gov/recycling"
+SGF_L="https://www.springfieldmo.gov/486/Noble-Hill-Sanitary-Landfill"
+SGF_LG="https://www.springfieldmo.gov/DocumentCenter/View/3101/Springfield-Sanitary-Landfill-PDF"
+SGF_C="https://www.springfieldmo.gov/5555/Curbside-Trash-Recycling"
+OZ_B="https://www.ozarkmissouri.com/138/Trash-and-Recycling-Billing-Information"
+OZ_C="https://www.ozarkmissouri.com/107/Code-Compliance"
+REP="https://www.republicservices.com/residents/recycling-and-solid-waste/bulk-waste"
+def S(u,t): return f' <a class="src" href="{u}" rel="nofollow">({t})</a>'
+JFN="junk-removal-springfield-ozark-mo.html"; urls.append(JFN)
+jbody=f"""<h1>Junk removal in Springfield and Ozark, Missouri</h1>
+<p class="lede">Need to get rid of an old couch, mattress, or a pile of junk? Here are the real options near Springfield and Ozark, with fees, addresses, and hours from official pages. Cheapest options come first.</p>
+<div class="glance"><div><span class="k">Sources</span>City of Springfield, City of Ozark, Republic Services</div><div><span class="k">Last checked</span><time datetime="{JCHECK}">{JCHECK}</time></div><div><span class="k">Status</span><span class="pill pill-ok">Checked on official pages</span></div></div>
+<section class="step donate"><h2>Step 1: Can someone else use it? Give it away first</h2>
+<ul><li>Offer good items free to neighbors (Buy Nothing groups, Nextdoor, Facebook Marketplace, Craigslist "free").</li>
+<li>Call a local thrift store, church, or shelter and ask if they take it and if they pick up. <strong>Call first.</strong> Many charities do not take used mattresses.</li></ul></section>
+<section class="step step-city"><h2>Step 2: Springfield rules and drop-off sites</h2>
+<ul><li><strong>No city curbside junk pickup.</strong> Trash in Springfield is picked up by more than 10 private, licensed hauling companies. Ask your own hauler about bulky items.{S(SGF_C,"City of Springfield")}</li>
+<li><strong>Mattresses and box springs: $20 per piece</strong>, any size. They are recycled (through a contract with Victory Mission), not buried. They must be clean, dry, and free of bugs. Wet or heavily soiled ones are refused.{S(SGF_M,"Mattress Recycling page")}</li>
+<li>Mattress drop-off sites:{S(SGF_M,"same page")}
+<ul><li>Lone Pine Avenue Recycling Center, 3020 S. Lone Pine Ave. Tuesday&ndash;Saturday, 8 a.m.&ndash;4:30 p.m.</li>
+<li>Franklin Avenue Recycling Center, 731 N. Franklin Ave. Tuesday&ndash;Saturday, 8 a.m.&ndash;4:30 p.m.</li>
+<li>Noble Hill Sanitary Landfill, 3545 W. Farm Road 34, Willard. Monday&ndash;Friday 7 a.m.&ndash;3:30 p.m.; Saturday 7 a.m.&ndash;2:30 p.m.</li></ul></li>
+<li><strong>Couches, furniture, and other junk:</strong> the Noble Hill Sanitary Landfill charges <strong>$43.85 per ton, with a $20 minimum</strong> per vehicle. It takes cash, check, and cards.{S(SGF_L,"Landfill page")} Small loads you unload by hand go to the Small Load Drop-off. Phone 417-742-3536.{S(SGF_LG,"Landfill guide")}</li>
+<li><strong>Recycling centers</strong> (cans, cardboard, glass, paper, plastic, yard waste) are free, with donations welcome. They are generally open Tuesday&ndash;Saturday, 8 a.m.&ndash;5 p.m. Franklin Avenue and Lone Pine take only cash or check.{S(SGF_R,"Recycling Centers page")}</li></ul></section>
+<section class="step step-city"><h2>Step 3: Ozark rules</h2>
+<ul><li>Ozark lets you pick any trash company. The city partners with <strong>Republic Services</strong> and puts that bill on your water bill. Republic customer service: 800-627-1717.{S(OZ_B,"City of Ozark")}</li>
+<li>Republic Services offers bulk pickup in some areas. It asks you to wrap mattresses in plastic, leave sofas and chairs in one piece, and take doors off fridges and washers. Ask them if it is offered at your address and what it costs.{S(REP,"Republic Services")}</li>
+<li>Do not leave junk in the yard. Ozark's code says furniture, appliances, and other junk must be properly disposed of. Questions: 417-581-2407.{S(OZ_C,"Ozark Code Compliance")}</li></ul>
+<p class="check">We could not find a current Ozark citywide cleanup date on an official page. Please call the city to ask.</p></section>
+<section class="step step-other"><h2>Step 4: Hire a junk removal company</h2>
+<p>If you can't haul it yourself, a company can load it for you. Get a written price first. Never pay someone who might dump it illegally. Not every company serves every town, so check your ZIP code on their site.</p>
+<ul><li><a href="https://www.1800gotjunk.com/us_en" rel="nofollow">1-800-GOT-JUNK?</a></li><li><a href="https://goloadup.com/" rel="nofollow">LoadUp</a></li><li><a href="https://www.collegehunkshaulingjunk.com/" rel="nofollow">College HUNKS Hauling Junk &amp; Moving</a></li><li><a href="https://www.angi.com/" rel="nofollow">Angi</a> (to compare local pros)</li></ul>
+<p><small>Listed in no special order. These are plain links, not affiliate links. No one paid to be here, and we have not used or tested these companies. If we ever earn money from a link, it will carry an "Affiliate link" label right next to it.</small></p>
+{SLOT('hauler-referral')}</section>
+<p>Anything not listed here: <strong>check with the city or your hauler</strong>. Fees and hours change. Last checked {JCHECK}.</p>"""
+page(JFN,f"Junk removal in Springfield and Ozark, MO ({JCHECK[:4]} fees and drop-off sites)","How to get rid of junk, couches, and mattresses in Springfield and Ozark, Missouri: drop-off sites, hours, fees, and pickup options, with official sources.",jbody)
+
 page("index.html",f"{SITE}: get rid of a mattress or couch in your city","How to get rid of a mattress or couch in the 25 biggest US cities. Donate first, then official city rules with sources.",
- f"<section class='hero'><h1>How to get rid of a mattress or couch</h1><p class='lede'>Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p><a class='btn' href='#cities'>Find my city's rules</a></p><ul class='trust'><li>Rules from official city pages, linked</li><li>Last-checked date on every page</li><li>No reviews, ratings or paid rankings</li></ul></section><section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are the 25 largest in the US by 2023 Census Bureau population estimates.</p></section>")
+ f"<section class='hero'><h1>How to get rid of a mattress or couch</h1><p class='lede'>Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p><a class='btn' href='#cities'>Find my city's rules</a></p><p><a class='btn' href='junk-removal-springfield-ozark-mo.html'>New: Junk removal in Springfield &amp; Ozark, MO</a></p><ul class='trust'><li>Rules from official city pages, linked</li><li>Last-checked date on every page</li><li>No reviews, ratings or paid rankings</li></ul></section><section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are the 25 largest in the US by 2023 Census Bureau population estimates.</p></section>")
 page("about.html",f"About {SITE}","How we build and check this guide.",f"""<h1>About this guide and how we check it</h1>
 <p>We want to make it easy to do the right thing with old furniture: give it away if you can, and follow city rules if you can't. That helps neighbors and cuts down on illegal dumping.</p>
 <h2>How we check</h2><ul><li>Every rule comes from an official city (or city-contracted) web page. We link to it.</li>
