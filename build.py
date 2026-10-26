@@ -73,11 +73,26 @@ def crumbs(fn,title):
     if fn=="index.html": return ""
     name="About" if fn=="about.html" else title.split(" in ",1)[-1].split(" (")[0]
     return f'<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="index.html">Home</a></li><li aria-current="page">{name}</li></ol></nav>'
+GSV='<meta name="google-site-verification" content="jSNJgTCUMSGQc1nbqHnKFmYa5zyTqizhnxAj2pmnIpA">'  # Nate's Search Console verification
+MOD={}  # fn -> dateModified (real last-checked date)
+REL={}  # fn -> related-links html
+def og(fn,title,desc,canon):
+    img=ROOT+"img/og.png"
+    t=_html.escape(_html.unescape(title),quote=True); d=_html.escape(_html.unescape(desc),quote=True)
+    return (f'<meta property="og:type" content="{"website" if fn=="index.html" else "article"}"><meta property="og:site_name" content="{SITE}">'
+            f'<meta property="og:title" content="{t}"><meta property="og:description" content="{d}"><meta property="og:url" content="{canon}">'
+            f'<meta property="og:image" content="{img}"><meta property="og:image:alt" content="Drawing of a city skyline with a small truck"><meta name="twitter:card" content="summary_large_image">')
+def article(fn,title,desc,canon):
+    if fn not in MOD: return ""
+    d={"@context":"https://schema.org","@type":"Article","headline":_html.unescape(title)[:110],"description":_html.unescape(desc),
+       "dateModified":MOD[fn],"mainEntityOfPage":canon,"inLanguage":"en-US","image":ROOT+"img/og.png",
+       "author":{"@type":"Organization","name":_html.unescape(SITE),"url":ROOT},"publisher":{"@type":"Organization","name":_html.unescape(SITE),"url":ROOT}}
+    return '<script type="application/ld+json">'+_json.dumps(d).replace("</","<\\/")+'</script>'
 def page(fn,title,desc,body):
-    body=herofy(fn,body)
+    body=herofy(fn,body)+REL.get(fn,"")
     canon=ROOT if fn=="index.html" else ROOT+fn
     open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC}
-<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css">{jsonld(fn,title)}</head><body>
+<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><span class="brand-mark">{ico("pin")}</span>{SITE}</a>
 <nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
@@ -85,6 +100,7 @@ def page(fn,title,desc,body):
 <footer class="site-footer"><div class="wrap"><p class="foot-brand"><span class="brand-mark">{ico("pin")}</span> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
 open(f"{OUT}/style.css","w").write(CSS)
 os.makedirs(f"{OUT}/img",exist_ok=True); open(f"{OUT}/img/skyline.svg","w").write(SKY)
+shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","og.png"),f"{OUT}/img/og.png")
 DON="""<section class="step donate"><h2>Step 1: Can someone else use it? Donate first</h2>
 <p>If your couch or mattress is clean and in good shape, giving it away helps a neighbor and keeps it out of the landfill.</p>
 <ul><li>Offer it free to neighbors (Buy Nothing groups, Nextdoor, Facebook Marketplace, Craigslist "free").</li>
@@ -109,6 +125,10 @@ for slug,name,st,pop,agency,src,rules,notes in C:
 </section><section class="step step-other"><h2>Step 3: Other options</h2>
 <p>If the city cannot help, you can hire a licensed hauler. Ask for a written price first. Never pay someone who might dump it illegally.</p>
 {SLOT('hauler-referral')}{SLOT('featured-local-hauler')}{SLOT('mattress-brand-haulaway')}</section>"""
+    MOD[fn]=CHECKED
+    near=[c for c in C if c[2]==st and c[0]!=slug][:3] or []
+    others=near+[c for c in C if c[0]!=slug and c not in near][:max(0,4-len(near))]
+    REL[fn]='<nav class="related" aria-label="Related pages"><h2>Other city guides</h2><ul>'+"".join(f'<li><a href="{c[0]}.html">Mattress and couch disposal in {c[1]}, {c[2]}</a></li>' for c in others[:4])+'<li><a href="junk-removal-springfield-ozark-mo.html">Junk removal in Springfield and Ozark, MO</a></li></ul></nav>'
     page(fn,f"Get rid of a mattress or couch in {name} ({CHECKED[:4]} city rules)",f"Free and low-cost ways to get rid of a mattress or couch in {name}: donate first, then official city pickup rules with a source link.",body)
     rows+=f'<li><a class="city" href="{fn}"><span class="cname">{name}, {st}</span>{"" if rules and not other else " <span class=\'pill pill-warn\'>(partly verified)</span>"}</a></li>'
 # --- Junk removal page: Springfield / Ozark, MO. Every fact read on the linked page on JCHECK. ---
@@ -150,23 +170,29 @@ jbody=f"""<h1>Junk removal in Springfield and Ozark, Missouri</h1>
 <p><small>Listed in no special order. These are plain links, not affiliate links. No one paid to be here, and we have not used or tested these companies. If we ever earn money from a link, it will carry an "Affiliate link" label right next to it.</small></p>
 {SLOT('hauler-referral')}</section>
 <p>Anything not listed here: <strong>check with the city or your hauler</strong>. Fees and hours change. Last checked {JCHECK}.</p>"""
+MOD[JFN]=JCHECK
+REL[JFN]='<nav class="related" aria-label="Related pages"><h2>Related guides</h2><ul><li><a href="index.html#cities">Mattress and couch rules in the 25 biggest US cities</a></li><li><a href="about.html">How we check our facts</a></li></ul></nav>'
 page(JFN,f"Junk removal in Springfield and Ozark, MO ({JCHECK[:4]} fees and drop-off sites)","How to get rid of junk, couches, and mattresses in Springfield and Ozark, Missouri: drop-off sites, hours, fees, and pickup options, with official sources.",jbody)
 
 page("index.html",f"{SITE}: get rid of a mattress or couch in your city","How to get rid of a mattress or couch in the 25 biggest US cities. Donate first, then official city rules with sources.",
  f"<h1>Get rid of your old mattress or couch, the right way</h1><p class=\"lede\">Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p class='ctas'><a class='btn' href='#cities'>Find my city's rules</a> <a class='btn btn-ghost' href='junk-removal-springfield-ozark-mo.html'>New: Junk removal in Springfield &amp; Ozark, MO</a></p>{cards([('doc','Official rules','Linked on every page'),('cal','Last checked','Date on every page'),('shield','No paid rankings','No reviews or ratings'),('heart','Donate first','Keep it out of the landfill')])}<section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are the 25 largest in the US by 2023 Census Bureau population estimates.</p></section>")
-page("about.html",f"About {SITE}","How we build and check this guide.",f"""<h1>About this guide and how we check it</h1>
+page("about.html",f"About {SITE}","How the Bulky Item Guide checks city rules: official sources only, a last-checked date on every page, and clear labels on any paid link.",f"""<h1>About this guide and how we check it</h1>
 <p>We want to make it easy to do the right thing with old furniture: give it away if you can, and follow city rules if you can't. That helps neighbors and cuts down on illegal dumping.</p>
 <h2>How we check</h2><ul><li>Every rule comes from an official city (or city-contracted) web page. We link to it.</li>
 <li>Each page shows the date we last checked it.</li><li>If we could not confirm a rule, we leave it out and tell you to check with the city. We never guess.</li>
 <li>We do not post reviews or ratings.</li></ul>
 <h2>Money and honesty</h2><p>This site may later earn money from clearly labeled ads, affiliate links, or labeled "featured" listings. Paid content will always be marked and will never change the city rules we show. This follows the FTC's rules on endorsements.</p>
 <h2>Found a mistake?</h2><p>Please tell us: {CONTACT}. City rules change often.</p><h2>Paid links</h2><p>Every paid link will carry a visible Sponsored or Affiliate link label right next to it. We will not praise a business just because it paid us.</p>""")
-open(f"{OUT}/sitemap.xml","w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{BASE}/{u}</loc><lastmod>{CHECKED}</lastmod></url>" for u in urls)+"</urlset>\n")
+open(f"{OUT}/sitemap.xml","w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{ROOT if u=='index.html' else BASE+'/'+u}</loc><lastmod>{MOD.get(u,CHECKED)}</lastmod></url>" for u in urls)+"</urlset>\n")
 open(f"{OUT}/robots.txt","w").write(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n")
+INDEXNOW_KEY="b7e4c1a9d2f84e6a9c3b5d7f1e2a4c6b"  # public by design (IndexNow protocol); not a secret
+open(f"{OUT}/{INDEXNOW_KEY}.txt","w").write(INDEXNOW_KEY)
+open(f"{OUT}/indexnow-urls.txt","w").write("\n".join(ROOT if u=="index.html" else f"{BASE}/{u}" for u in urls)+"\n")
 print(len(urls),"pages")
 # Guard (Counsel rule 14): fail the build if any page lacks the security/SEO head tags or uses inline style/script/forms.
 import glob as _g, re as _re
 for _f in _g.glob(f"{OUT}/*.html"):
     _h=open(_f).read()
     assert "Content-Security-Policy" in _h and "script-src 'none'" in _h and 'name="referrer"' in _h and 'rel="canonical"' in _h and "application/ld+json" in _h, f"missing head tags: {_f}"
+    assert _h.count("<title>")==1 and 'property="og:title"' in _h, f"missing title/og: {_f}"
     assert not _re.search(r'style=|<style|<form|<iframe|<script(?! type="application/ld\+json")',_h), f"inline style/script/form: {_f}"
