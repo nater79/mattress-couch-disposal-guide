@@ -30,8 +30,32 @@ def disc():
     state="Right now this page has no paid links, ads, or sponsored listings." if n==0 else f"This page has {n} paid placement(s), each labeled Sponsored or Affiliate link right next to it."
     return ('<aside class="disc" id="ftc-disclosure"><strong>Disclosure:</strong> This site may earn money from clearly labeled ads, affiliate links, or sponsored listings. '
             f'Paid placements never change what the city rules say. {state}</aside>')
+
+# --- Redesign helpers: hand-drawn SVG art (no outside assets) ---
+SKY="""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="Drawing of a city skyline with a small truck"><rect width="640" height="300" fill="#e8f6f4"/><circle cx="520" cy="70" r="34" fill="#ffd36e"/><g fill="#b9e3dd"><rect x="20" y="120" width="60" height="140"/><rect x="90" y="80" width="50" height="180"/><rect x="150" y="140" width="70" height="120"/><rect x="230" y="60" width="44" height="200"/><rect x="284" y="110" width="66" height="150"/><rect x="360" y="90" width="40" height="170"/><rect x="410" y="130" width="80" height="130"/><rect x="500" y="100" width="54" height="160"/><rect x="564" y="140" width="60" height="120"/></g><g fill="#fff" opacity=".8"><rect x="100" y="95" width="10" height="12"/><rect x="120" y="95" width="10" height="12"/><rect x="100" y="120" width="10" height="12"/><rect x="240" y="80" width="8" height="12"/><rect x="256" y="80" width="8" height="12"/><rect x="240" y="104" width="8" height="12"/><rect x="368" y="110" width="8" height="12"/><rect x="384" y="110" width="8" height="12"/><rect x="512" y="120" width="10" height="12"/><rect x="530" y="120" width="10" height="12"/></g><rect y="258" width="640" height="42" fill="#0f766e"/><rect y="276" width="640" height="4" fill="#fff" opacity=".5"/><g transform="translate(190 186)"><rect x="0" y="10" width="150" height="62" rx="6" fill="#14b8a6"/><path d="M150 30h42l26 26v16h-68z" fill="#0d9488"/><path d="M160 36h28l18 18h-46z" fill="#e8f6f4"/><rect x="20" y="24" width="40" height="30" rx="3" fill="#fff" opacity=".9"/><rect x="70" y="30" width="60" height="24" rx="3" fill="#fff" opacity=".7"/><circle cx="40" cy="76" r="14" fill="#1f2937"/><circle cx="40" cy="76" r="6" fill="#e5e7eb"/><circle cx="180" cy="76" r="14" fill="#1f2937"/><circle cx="180" cy="76" r="6" fill="#e5e7eb"/></g></svg>"""
+ICONS={
+ "heart":'<path d="M12 21s-7-4.5-9.5-9A5 5 0 0 1 12 6a5 5 0 0 1 9.5 6C19 16.5 12 21 12 21z"/>',
+ "doc":'<path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7M9 8h4"/>',
+ "cal":'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ "shield":'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+ "truck":'<path d="M2 7h12v9H2zM14 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+ "pin":'<path d="M12 22s7-7 7-12a7 7 0 0 0-14 0c0 5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>'}
+def ico(n): return f'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{ICONS[n]}</svg>'
+def cards(items): return '<ul class="cards">'+"".join(f'<li class="card"><span class="ico-wrap">{ico(i)}</span><strong>{t}</strong><span>{d}</span></li>' for i,t,d in items)+'</ul>'
+# Hero image slots: drop a file at site-src/img/<name> and it replaces the SVG drawing.
+def hero_art(fn):
+    name={"index.html":"hero-home.webp","junk-removal-springfield-ozark-mo.html":"hero-junk.webp"}.get(fn)
+    src=os.path.join(os.path.dirname(os.path.abspath(__file__)),"img",name) if name else None
+    if src and os.path.exists(src):
+        os.makedirs(f"{OUT}/img",exist_ok=True); shutil.copy(src,f"{OUT}/img/{name}")
+        return f'<img class="hero-img" src="img/{name}" width="1200" height="800" alt="" loading="eager">'
+    return '<img class="hero-img" src="img/skyline.svg" width="640" height="300" alt="">'
+def herofy(fn,body):
+    m=re.match(r'\s*(<h1>.*?</h1>)\s*(<p class="lede">.*?</p>)?',body,re.S)
+    if not m: return body
+    return f'<section class="hero"><div class="hero-text">{m.group(1)}{m.group(2) or ""}</div><div class="hero-art">{hero_art(fn)}</div></section>'+body[m.end():]
 CSS=open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"design.css")).read()
-import json as _json, html as _html
+import json as _json, re, shutil, html as _html
 # Security headers (Counsel rule 14) - keep on every page. No inline styles/scripts allowed; JSON-LD is data, not executed.
 HEAD_SEC=("<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'\">"
           '<meta name="referrer" content="strict-origin-when-cross-origin">')
@@ -50,15 +74,17 @@ def crumbs(fn,title):
     name="About" if fn=="about.html" else title.split(" in ",1)[-1].split(" (")[0]
     return f'<nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="index.html">Home</a></li><li aria-current="page">{name}</li></ol></nav>'
 def page(fn,title,desc,body):
+    body=herofy(fn,body)
     canon=ROOT if fn=="index.html" else ROOT+fn
     open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC}
 <title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css">{jsonld(fn,title)}</head><body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">&#9851;</span>{SITE}</a>
+<header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><span class="brand-mark">{ico("pin")}</span>{SITE}</a>
 <nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
 <div class="wrap">{crumbs(fn,title)}{disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
-<footer class="site-footer"><div class="wrap"><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
+<footer class="site-footer"><div class="wrap"><p class="foot-brand"><span class="brand-mark">{ico("pin")}</span> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
 open(f"{OUT}/style.css","w").write(CSS)
+os.makedirs(f"{OUT}/img",exist_ok=True); open(f"{OUT}/img/skyline.svg","w").write(SKY)
 DON="""<section class="step donate"><h2>Step 1: Can someone else use it? Donate first</h2>
 <p>If your couch or mattress is clean and in good shape, giving it away helps a neighbor and keeps it out of the landfill.</p>
 <ul><li>Offer it free to neighbors (Buy Nothing groups, Nextdoor, Facebook Marketplace, Craigslist "free").</li>
@@ -74,6 +100,7 @@ for slug,name,st,pop,agency,src,rules,notes in C:
     status="Partly verified" if (not rules or other) else "Verified on official page"
     body=f"""<h1>How to get rid of a mattress or couch in {name}, {st}</h1>
 <div class="glance"><div><span class="k">Official source</span><a href="{src}" rel="nofollow">{agency}</a></div><div><span class="k">Last checked</span><time datetime="{CHECKED}">{CHECKED}</time></div><div><span class="k">Status</span><span class="pill {'pill-warn' if status!='Verified on official page' else 'pill-ok'}">{status}</span></div></div>
+{cards([("heart","Donate first","Help a neighbor"),("doc","Official rules","Linked source"),("cal","Last checked","Dated every page"),("truck","Hauler options","Ask for a written price")])}
 {DON.format(extra=ex)}
 <section class="step step-city"><h2>Step 2: City pickup and drop-off rules</h2>
 {'<ul>'+rl+'</ul>' if rules else ''}{other}
@@ -99,6 +126,7 @@ JFN="junk-removal-springfield-ozark-mo.html"; urls.append(JFN)
 jbody=f"""<h1>Junk removal in Springfield and Ozark, Missouri</h1>
 <p class="lede">Need to get rid of an old couch, mattress, or a pile of junk? Here are the real options near Springfield and Ozark, with fees, addresses, and hours from official pages. Cheapest options come first.</p>
 <div class="glance"><div><span class="k">Sources</span>City of Springfield, City of Ozark, Republic Services</div><div><span class="k">Last checked</span><time datetime="{JCHECK}">{JCHECK}</time></div><div><span class="k">Status</span><span class="pill pill-ok">Checked on official pages</span></div></div>
+{cards([("heart","Give it away","Free and kind"),("pin","Drop-off sites","Hours and addresses"),("doc","Real fees","From city pages"),("truck","Hire a hauler","Get a price first")])}
 <section class="step donate"><h2>Step 1: Can someone else use it? Give it away first</h2>
 <ul><li>Offer good items free to neighbors (Buy Nothing groups, Nextdoor, Facebook Marketplace, Craigslist "free").</li>
 <li>Call a local thrift store, church, or shelter and ask if they take it and if they pick up. <strong>Call first.</strong> Many charities do not take used mattresses.</li></ul></section>
@@ -125,7 +153,7 @@ jbody=f"""<h1>Junk removal in Springfield and Ozark, Missouri</h1>
 page(JFN,f"Junk removal in Springfield and Ozark, MO ({JCHECK[:4]} fees and drop-off sites)","How to get rid of junk, couches, and mattresses in Springfield and Ozark, Missouri: drop-off sites, hours, fees, and pickup options, with official sources.",jbody)
 
 page("index.html",f"{SITE}: get rid of a mattress or couch in your city","How to get rid of a mattress or couch in the 25 biggest US cities. Donate first, then official city rules with sources.",
- f"<section class='hero'><h1>How to get rid of a mattress or couch</h1><p class='lede'>Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p><a class='btn' href='#cities'>Find my city's rules</a></p><p><a class='btn' href='junk-removal-springfield-ozark-mo.html'>New: Junk removal in Springfield &amp; Ozark, MO</a></p><ul class='trust'><li>Rules from official city pages, linked</li><li>Last-checked date on every page</li><li>No reviews, ratings or paid rankings</li></ul></section><section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are the 25 largest in the US by 2023 Census Bureau population estimates.</p></section>")
+ f"<h1>Get rid of your old mattress or couch, the right way</h1><p class=\"lede\">Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p class='ctas'><a class='btn' href='#cities'>Find my city's rules</a> <a class='btn btn-ghost' href='junk-removal-springfield-ozark-mo.html'>New: Junk removal in Springfield &amp; Ozark, MO</a></p>{cards([('doc','Official rules','Linked on every page'),('cal','Last checked','Date on every page'),('shield','No paid rankings','No reviews or ratings'),('heart','Donate first','Keep it out of the landfill')])}<section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are the 25 largest in the US by 2023 Census Bureau population estimates.</p></section>")
 page("about.html",f"About {SITE}","How we build and check this guide.",f"""<h1>About this guide and how we check it</h1>
 <p>We want to make it easy to do the right thing with old furniture: give it away if you can, and follow city rules if you can't. That helps neighbors and cuts down on illegal dumping.</p>
 <h2>How we check</h2><ul><li>Every rule comes from an official city (or city-contracted) web page. We link to it.</li>
