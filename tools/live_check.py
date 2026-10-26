@@ -20,7 +20,7 @@ for f in files:
     c=re.search(r'<link rel="canonical" href="([^"]+)"',h); exp=BASE if f=="index.html" else BASE+f
     r["canonical"]=bool(c) and c.group(1)==exp
     j=re.findall(r'<script type="application/ld\+json">(.*?)</script>',h,re.S)
-    try: d=[json.loads(x) for x in j]; r["jsonld"]=len(d)==1 and d[0]["@type"]==("WebSite" if f=="index.html" else "BreadcrumbList")
+    try: d=[json.loads(x) for x in j]; r["jsonld"]=len(d)>=1 and d[0]["@type"]==("WebSite" if f=="index.html" else "BreadcrumbList") and all(x["@type"]=="Article" and x.get("dateModified") for x in d[1:]) and len(d)<=2
     except Exception: r["jsonld"]=False
     r["no_inline_or_3p"]=not re.search(r'style=|<style|<form|<iframe|<script(?! type="application/ld\+json")',h)
     links|=set(re.findall(r'href="([^"#:]+)"',h))
