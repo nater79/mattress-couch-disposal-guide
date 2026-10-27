@@ -122,5 +122,18 @@ a:focus-visible,.btn:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
 
 .brand-logo{display:block;height:40px;width:auto}
 .foot-logo{vertical-align:middle;height:24px;width:24px}
+/* Newsletter (2026-10-27) */
+.nl-kicker{display:inline-block;background:#e6f4f4;color:#0b4f55;font-weight:800;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;margin:0 0 10px}
+.nl-hero{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center;background:linear-gradient(135deg,#0b4f55,#0f8b8d);color:#fff;border-radius:24px;padding:36px;margin:20px 0 24px}
+.nl-hero h1{color:#fff;font-size:clamp(1.9rem,4.2vw,2.8rem);line-height:1.1;font-weight:900;margin:0 0 12px}.nl-hero .lede{color:#e6f4f4}
+.nl-hero-art img{width:100%;height:auto;border-radius:18px;display:block;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.nl-signup{background:#fff;color:#0b4f55;border-radius:16px;padding:16px;margin:18px 0 10px;display:grid;grid-template-columns:1fr auto;gap:10px}
+.nl-signup label{grid-column:1/-1;font-weight:700}.nl-signup input{min-height:48px;border:1px solid #b9d6d6;border-radius:999px;padding:0 16px;font-size:1rem;background:#f3f7f7}
+.nl-signup .btn[disabled]{background:#9bb9ba;cursor:not-allowed}.nl-status{grid-column:1/-1;margin:0;font-size:.9rem;color:#33585b}
+.nl-trust{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 16px;font-size:.92rem}.nl-trust li::before{content:"\2713  ";font-weight:900}
+.nl-sections{padding-left:1.2em}.nl-sections li{margin:8px 0}
+.nl-card{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;background:#e6f4f4;border:2px solid #0f8b8d;border-radius:20px;padding:20px 24px;margin:28px 0}
+.nl-card h2{margin:0 0 6px;color:#0b4f55}.nl-card p{margin:0}
+@media (max-width:760px){.nl-hero{grid-template-columns:1fr;padding:24px}.nl-signup{grid-template-columns:1fr}}
 
 .vid{max-width:100%;height:auto;display:block;background:#000;border-radius:8px}

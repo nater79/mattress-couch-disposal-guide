@@ -89,14 +89,17 @@ def article(fn,title,desc,canon):
        "dateModified":MOD[fn],"mainEntityOfPage":canon,"inLanguage":"en-US","image":ROOT+"img/og.png",
        "author":{"@type":"Organization","name":_html.unescape(SITE),"url":ROOT},"publisher":{"@type":"Organization","name":_html.unescape(SITE),"url":ROOT}}
     return '<script type="application/ld+json">'+_json.dumps(d).replace("</","<\\/")+'</script>'
+NL_CARD=('<aside class="nl-card" aria-labelledby="nl-card-h"><div><p class="nl-kicker">Free email &middot; coming soon</p><h2 id="nl-card-h">Declutter, Move &amp; Downsize Smart</h2>'
+ '<p>One short email every other week: what to keep, what to give away, and how to get rid of the rest without a fine. About a 3-minute read.</p></div>'
+ '<p><a class="btn" href="newsletter.html">See what it will look like</a></p></aside>')
 def page(fn,title,desc,body):
-    body=herofy(fn,body)+REL.get(fn,"")
+    body=herofy(fn,body)+REL.get(fn,"")+(NL_CARD if fn!="newsletter.html" else "")
     canon=ROOT if fn=="index.html" else ROOT+fn
     open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC}
 <title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css"><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="img/favicon-180.png">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>
-<nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
+<nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="newsletter.html">Newsletter</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
 <div class="wrap">{crumbs(fn,title)}{disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
 <footer class="site-footer"><div class="wrap"><p class="foot-brand"><img class="foot-logo" src="img/favicon-32.png" width="24" height="24" alt=""> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
 open(f"{OUT}/style.css","w").write(CSS)
@@ -188,6 +191,29 @@ page("about.html",f"About {SITE}","How the Bulky Item Guide checks city rules: o
 <li>We do not post reviews or ratings.</li></ul>
 <h2>Money and honesty</h2><p>This site may later earn money from clearly labeled ads, affiliate links, or labeled "featured" listings. Paid content will always be marked and will never change the city rules we show. This follows the FTC's rules on endorsements.</p>
 <h2>Found a mistake?</h2><p>Please tell us: {CONTACT}. City rules change often.</p><h2>Paid links</h2><p>Every paid link will carry a visible Sponsored or Affiliate link label right next to it. We will not praise a business just because it paid us.</p>""")
+
+# --- Newsletter page (signup NOT live yet: no Kit account; button disabled, no form, no email collected) ---
+NFN="newsletter.html"; urls.append(NFN); MOD[NFN]="2026-10-27"
+shutil.copy(os.path.join(_I,"newsletter-hero.webp"),f"{OUT}/img/newsletter-hero.webp")
+nbody="""<section class="nl-hero"><div class="nl-hero-text"><p class="nl-kicker">Free newsletter &middot; coming soon</p>
+<h1>Clear out your home in less time, with fewer headaches</h1>
+<p class="lede">A short, free email every other week for people who are moving, downsizing, or just tired of clutter. About a 3-minute read.</p>
+<div class="nl-signup"><label for="nl-email">Email address</label><input id="nl-email" type="email" placeholder="you@example.com" disabled aria-describedby="nl-status">
+<button class="btn" type="button" disabled aria-disabled="true">Coming soon</button>
+<p id="nl-status" class="nl-status"><strong>Signups are not open yet.</strong> This box does not collect anything. When it opens, we will say so right here.</p></div>
+<ul class="nl-trust"><li>Free</li><li>Leave anytime with one click</li><li>No spam, and we never sell your email</li></ul></div>
+<div class="nl-hero-art"><img src="img/newsletter-hero.webp" width="1200" height="672" alt="Drawing of a tidy room with packed moving boxes and a donate box" loading="eager"></div></section>
+<section class="step"><h2>What is in each email</h2>"""+cards([("heart","Give it a new home","One easy way to donate or sell"),("doc","Rule check","One real city rule, with the source"),("cal","Room of the week","A small 15-minute task"),("truck","Haul-away tips","How to get a fair price")])+"""</section>
+<section class="step nl-sample"><h2>A look at a sample issue</h2><p>This is a made-up preview so you know what to expect. It is not a real past issue.</p>
+<ol class="nl-sections"><li><strong>&#x1F4E6; The quick list</strong> &mdash; three short tips, two lines each.</li>
+<li><strong>&#x1F3E0; Room of the week</strong> &mdash; one closet, drawer, or garage corner, step by step.</li>
+<li><strong>&#x1F4CD; City rule check</strong> &mdash; one city's bulky-item rule, with a link to the official page and the date we checked.</li>
+<li><strong>&#x1F91D; Give it away</strong> &mdash; ideas for donating things people actually want.</li>
+<li><strong>&#x1F4E3; Sponsor spot</strong> &mdash; if we ever have one, it will be labeled <em>Sponsored</em> at the top. Right now there are none.</li></ol></section>
+<section class="step"><h2>Honest notes</h2><ul><li><strong>Who we are:</strong> the same small team that writes this site's city guides. We do not show subscriber counts or reviews we don't have.</li>
+<li><strong>Money:</strong> some future emails may have clearly labeled affiliate links or a labeled sponsor. That never changes the city rules we share.</li>
+<li><strong>Privacy:</strong> when signups open, we will only ask for your email. We will use it only to send this newsletter, never sell or share it, and you can unsubscribe anytime. Questions: """+CONTACT+""".</li></ul></section>"""
+page(NFN,"Declutter, Move & Downsize Smart: a free newsletter (coming soon)","A free email every other week with simple tips for decluttering, moving, and downsizing, plus real city rules for bulky items. Signups open soon.",nbody)
 open(f"{OUT}/sitemap.xml","w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{ROOT if u=='index.html' else BASE+'/'+u}</loc><lastmod>{MOD.get(u,CHECKED)}</lastmod></url>" for u in urls)+"</urlset>\n")
 open(f"{OUT}/robots.txt","w").write(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n")
 INDEXNOW_KEY="b7e4c1a9d2f84e6a9c3b5d7f1e2a4c6b"  # public by design (IndexNow protocol); not a secret
