@@ -1,5 +1,6 @@
 import os, html
-from cities import C, CHECKED
+from cities import C, CHECKED, CHECKED_BY
+NCITY=len(C)
 BASE = os.environ.get("BASE","https://nater79.github.io/mattress-couch-disposal-guide")
 OUT="site"; os.makedirs(OUT,exist_ok=True)
 SITE="Bulky Item Guide"
@@ -111,27 +112,28 @@ DON="""<section class="step donate"><h2>Step 1: Can someone else use it? Donate 
 urls=["index.html","about.html"]
 rows=""
 for slug,name,st,pop,agency,src,rules,notes in C:
+    CK=CHECKED_BY.get(slug,CHECKED)
     fn=f"{slug}.html"; urls.append(fn)
     ex="".join(f"<li>{n}</li>" for n in notes if "Bye Bye" in n)
     rl="".join(f"<li>{r}</li>" for r in rules)
     other="".join(f'<p class="check">{n}</p>' for n in notes if "Bye Bye" not in n)
     status="Partly verified" if (not rules or other) else "Verified on official page"
     body=f"""<h1>How to get rid of a mattress or couch in {name}, {st}</h1>
-<div class="glance"><div><span class="k">Official source</span><a href="{src}" rel="nofollow">{agency}</a></div><div><span class="k">Last checked</span><time datetime="{CHECKED}">{CHECKED}</time></div><div><span class="k">Status</span><span class="pill {'pill-warn' if status!='Verified on official page' else 'pill-ok'}">{status}</span></div></div>
+<div class="glance"><div><span class="k">Official source</span><a href="{src}" rel="nofollow">{agency}</a></div><div><span class="k">Last checked</span><time datetime="{CK}">{CK}</time></div><div><span class="k">Status</span><span class="pill {'pill-warn' if status!='Verified on official page' else 'pill-ok'}">{status}</span></div></div>
 {cards([("heart","Donate first","Help a neighbor"),("doc","Official rules","Linked source"),("cal","Last checked","Dated every page"),("truck","Hauler options","Ask for a written price")])}
 {DON.format(extra=ex)}
 <section class="step step-city"><h2>Step 2: City pickup and drop-off rules</h2>
 {'<ul>'+rl+'</ul>' if rules else ''}{other}
 <p>Anything not listed here: <strong>check with the city</strong>. We only list rules we could confirm on an official page.</p>
-<p><strong>Official source:</strong> <a href="{src}" rel="nofollow">{agency}</a><br><strong>Last checked:</strong> {CHECKED}</p>
+<p><strong>Official source:</strong> <a href="{src}" rel="nofollow">{agency}</a><br><strong>Last checked:</strong> {CK}</p>
 </section><section class="step step-other"><h2>Step 3: Other options</h2>
 <p>If the city cannot help, you can hire a licensed hauler. Ask for a written price first. Never pay someone who might dump it illegally.</p>
 {SLOT('hauler-referral')}{SLOT('featured-local-hauler')}{SLOT('mattress-brand-haulaway')}</section>"""
-    MOD[fn]=CHECKED
+    MOD[fn]=CK
     near=[c for c in C if c[2]==st and c[0]!=slug][:3] or []
     others=near+[c for c in C if c[0]!=slug and c not in near][:max(0,4-len(near))]
     REL[fn]='<nav class="related" aria-label="Related pages"><h2>Other city guides</h2><ul>'+"".join(f'<li><a href="{c[0]}.html">Mattress and couch disposal in {c[1]}, {c[2]}</a></li>' for c in others[:4])+'<li><a href="junk-removal-springfield-ozark-mo.html">Junk removal in Springfield and Ozark, MO</a></li></ul></nav>'
-    page(fn,f"Get rid of a mattress or couch in {name} ({CHECKED[:4]} city rules)",f"Free and low-cost ways to get rid of a mattress or couch in {name}: donate first, then official city pickup rules with a source link.",body)
+    page(fn,f"Get rid of a mattress or couch in {name} ({CK[:4]} city rules)",f"Free and low-cost ways to get rid of a mattress or couch in {name}: donate first, then official city pickup rules with a source link.",body)
     rows+=f'<li><a class="city" href="{fn}"><span class="cname">{name}, {st}</span>{"" if rules and not other else " <span class=\'pill pill-warn\'>(partly verified)</span>"}</a></li>'
 # --- Junk removal page: Springfield / Ozark, MO. Every fact read on the linked page on JCHECK. ---
 JCHECK="2026-10-26"
@@ -178,7 +180,7 @@ exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"local_pages.p
 page(JFN,f"Junk removal in Springfield and Ozark, MO ({JCHECK[:4]} fees and drop-off sites)","How to get rid of junk, couches, and mattresses in Springfield and Ozark, Missouri: drop-off sites, hours, fees, and pickup options, with official sources.",jbody)
 
 page("index.html",f"{SITE}: get rid of a mattress or couch in your city","How to get rid of a mattress or couch in the 25 biggest US cities. Donate first, then official city rules with sources.",
- f"<h1>Get rid of your old mattress or couch, the right way</h1><p class=\"lede\">Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p class='ctas'><a class='btn' href='#cities'>Find my city's rules</a> <a class='btn btn-ghost' href='junk-removal-springfield-ozark-mo.html'>New: Junk removal in Springfield &amp; Ozark, MO</a></p>{cards([('doc','Official rules','Linked on every page'),('cal','Last checked','Date on every page'),('shield','No paid rankings','No reviews or ratings'),('heart','Donate first','Keep it out of the landfill')])}<section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are the 25 largest in the US by 2023 Census Bureau population estimates.</p></section>")
+ f"<h1>Get rid of your old mattress or couch, the right way</h1><p class=\"lede\">Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p class='ctas'><a class='btn' href='#cities'>Find my city's rules</a> <a class='btn btn-ghost' href='junk-removal-springfield-ozark-mo.html'>New: Junk removal in Springfield &amp; Ozark, MO</a></p>{cards([('doc','Official rules','Linked on every page'),('cal','Last checked','Date on every page'),('shield','No paid rankings','No reviews or ratings'),('heart','Donate first','Keep it out of the landfill')])}<section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are the {NCITY} largest in the US by 2023 Census Bureau population estimates.</p></section>")
 page("about.html",f"About {SITE}","How the Bulky Item Guide checks city rules: official sources only, a last-checked date on every page, and clear labels on any paid link.",f"""<h1>About this guide and how we check it</h1>
 <p>We want to make it easy to do the right thing with old furniture: give it away if you can, and follow city rules if you can't. That helps neighbors and cuts down on illegal dumping.</p>
 <h2>How we check</h2><ul><li>Every rule comes from an official city (or city-contracted) web page. We link to it.</li>

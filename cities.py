@@ -1,5 +1,6 @@
 # Each fact below was read on the linked official page on CHECKED. Nothing is guessed.
 CHECKED = "2026-10-25"
+CHECKED_BY = {"detroit": "2026-10-26"}  # per-city check dates; others use CHECKED
 CA = ["If a store delivers a new mattress to you in California, state law says the store must offer to pick up your old one at no extra cost. If it came by a shipping company, the store must offer to arrange pickup within 30 days. Stores may refuse a contaminated mattress (<a href=\"https://calrecycle.ca.gov/epr/enforcement/mattress-epr-enforcement/\">CalRecycle</a>; <a href=\"https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?article=7.&amp;chapter=21.&amp;division=30.&amp;lawCode=PRC&amp;part=3.&amp;title=\">Cal. Public Resources Code 42992</a>). You can also drop off a mattress for free at Bye Bye Mattress sites: <a href=\"https://byebyemattress.com/california/\">byebyemattress.com/california</a>."]
 C = [
 ("new-york","New York City","NY",8258035,"NYC Department of Sanitation (DSNY)","https://www.nyc.gov/site/dsny/collection/get-rid-of/furniture-mattresses.page",[
@@ -136,4 +137,13 @@ C = [
  "Put the mattress at the curb after 5 p.m. the night before or by 6 a.m. the day of. Do not cut or crush it.",
  "Soiled mattresses or ones with bed bugs must be fully bagged and sealed.",
  "Limit: 10 mattresses per year. Questions: 311 or 617-635-4500."],[]),
+("detroit","Detroit","MI",633218,"City of Detroit Department of Public Works","https://detroitmi.gov/departments/department-public-works/refuse-collection",[
+ "Bulk items are picked up at the curb on your trash day. The city's DPW page and its <a href=\"https://detroitmi.gov/sites/detroitmi.localhost/files/2026-02/2026%20DPW_CurbsideColl_2026_021226.pdf\">2026 curbside flyer</a> say bulk is now picked up weekly. An older city page still says every other week, so check your date with the <a href=\"https://detroitmi.gov/webapp/find-your-waste-pickup-schedule\">pickup schedule tool</a>.",
+ "The city lists furniture and mattresses as bulk items (<a href=\"https://detroitmi.gov/departments/general-services-department/free-dumping-detroiters\">City of Detroit, Free Dumping for Detroiters</a>).",
+ "Limit: up to 2 cubic yards (about the size of 2 stoves) and no more than 1,000 pounds per pickup. Spread extra items over more weeks.",
+ "Put items out by 7 a.m. on collection day, and no earlier than 6 p.m. the day before. Put them in front of your own home, never in front of a vacant lot or vacant house.",
+ "Size note: one city page says all bulk items should be under 4 feet and 50 pounds, but the 2026 flyer gives that limit for renovation materials. If your couch is large, call DPW first at 313-876-0004.",
+ "Free drop-off for Detroit residents (bring a driver's license, state ID or Detroit ID): Southfield Yard (12255 Southfield), Davison Yard (8221 W. Davison) and J. Fons Transfer Station (6451 E. McNichols), up to 2 cubic yards or 1,000 pounds free. Hours change by season; see the 2026 flyer.",
+ "Too much for the curb? The city offers paid bulk pickup at $40 per cubic yard. Call 313-876-0004.",
+ "Get pickup reminders by texting your street address to 313-800-7905."],[]),
 ]
