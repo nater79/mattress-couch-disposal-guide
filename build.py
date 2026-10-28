@@ -4,7 +4,7 @@ NCITY=len(C)
 BASE = os.environ.get("BASE","https://nater79.github.io/mattress-couch-disposal-guide")
 OUT="site"; os.makedirs(OUT,exist_ok=True)
 SITE="Bulky Item Guide"
-CONTACT="navexiateam [at] navexia [dot] net"  # FLAG: Nate must supply a real contact address
+CONTACT="navexiateam [at] navexia [dot] net"  # Monitored contact chosen by Nate 2026-10-28 (t102u); replies only, Navexia outbound hard stop applies
 # PAID: slot name -> dict(kind="Sponsored"|"Affiliate link", url=..., text=...). Fill only with real, approved deals.
 PAID={}
 BANNED=("recommended","best","top-rated","#1")
@@ -89,9 +89,9 @@ def article(fn,title,desc,canon):
        "dateModified":MOD[fn],"mainEntityOfPage":canon,"inLanguage":"en-US","image":ROOT+"img/og.png",
        "author":{"@type":"Organization","name":_html.unescape(SITE),"url":ROOT},"publisher":{"@type":"Organization","name":_html.unescape(SITE),"url":ROOT}}
     return '<script type="application/ld+json">'+_json.dumps(d).replace("</","<\\/")+'</script>'
-NL_CARD=('<aside class="nl-card" aria-labelledby="nl-card-h"><div><p class="nl-kicker">Free email &middot; coming soon</p><h2 id="nl-card-h">Declutter, Move &amp; Downsize Smart</h2>'
+NL_CARD=('<aside class="nl-card" aria-labelledby="nl-card-h"><div><p class="nl-kicker">Free email newsletter</p><h2 id="nl-card-h">Declutter, Move &amp; Downsize Smart</h2>'
  '<p>One short email every other week: what to keep, what to give away, and how to get rid of the rest without a fine. About a 3-minute read.</p></div>'
- '<p><a class="btn" href="newsletter.html">See what it will look like</a></p></aside>')
+ '<p><a class="btn" href="https://lucca-4.kit.com/a1f664d024" rel="noopener">Subscribe free</a> <a href="newsletter.html">See what is inside</a></p><p class="nl-status">Signup is handled by Kit (our email service). <a href="privacy.html">Privacy</a></p></aside>')
 def page(fn,title,desc,body):
     body=herofy(fn,body)+REL.get(fn,"")+(NL_CARD if fn!="newsletter.html" else "")
     canon=ROOT if fn=="index.html" else ROOT+fn
@@ -101,7 +101,7 @@ def page(fn,title,desc,body):
 <header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>
 <nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="newsletter.html">Newsletter</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
 <div class="wrap">{crumbs(fn,title)}{disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
-<footer class="site-footer"><div class="wrap"><p class="foot-brand"><img class="foot-logo" src="img/favicon-32.png" width="24" height="24" alt=""> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
+<footer class="site-footer"><div class="wrap"><p class="foot-brand"><img class="foot-logo" src="img/favicon-32.png" width="24" height="24" alt=""> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="newsletter.html">Newsletter</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
 open(f"{OUT}/style.css","w").write(CSS)
 os.makedirs(f"{OUT}/img",exist_ok=True); open(f"{OUT}/img/skyline.svg","w").write(SKY)
 _I=os.path.join(os.path.dirname(os.path.abspath(__file__)),"img")
@@ -192,15 +192,14 @@ page("about.html",f"About {SITE}","How the Bulky Item Guide checks city rules: o
 <h2>Money and honesty</h2><p>This site may later earn money from clearly labeled ads, affiliate links, or labeled "featured" listings. Paid content will always be marked and will never change the city rules we show. This follows the FTC's rules on endorsements.</p>
 <h2>Found a mistake?</h2><p>Please tell us: {CONTACT}. City rules change often.</p><h2>Paid links</h2><p>Every paid link will carry a visible Sponsored or Affiliate link label right next to it. We will not praise a business just because it paid us.</p>""")
 
-# --- Newsletter page (signup NOT live yet: no Kit account; button disabled, no form, no email collected) ---
+# --- Newsletter page (signup via Kit hosted page link; no embedded form/scripts) ---
 NFN="newsletter.html"; urls.append(NFN); MOD[NFN]="2026-10-27"
 shutil.copy(os.path.join(_I,"newsletter-hero.webp"),f"{OUT}/img/newsletter-hero.webp")
-nbody="""<section class="nl-hero"><div class="nl-hero-text"><p class="nl-kicker">Free newsletter &middot; coming soon</p>
+nbody="""<section class="nl-hero"><div class="nl-hero-text"><p class="nl-kicker">Free newsletter</p>
 <h1>Clear out your home in less time, with fewer headaches</h1>
 <p class="lede">A short, free email every other week for people who are moving, downsizing, or just tired of clutter. About a 3-minute read.</p>
-<div class="nl-signup"><label for="nl-email">Email address</label><input id="nl-email" type="email" placeholder="you@example.com" disabled aria-describedby="nl-status">
-<button class="btn" type="button" disabled aria-disabled="true">Coming soon</button>
-<p id="nl-status" class="nl-status"><strong>Signups are not open yet.</strong> This box does not collect anything. When it opens, we will say so right here.</p></div>
+<div class="nl-signup"><p><a class="btn" href="https://lucca-4.kit.com/a1f664d024" rel="noopener">Subscribe free</a></p>
+<p class="nl-status">The button opens our signup page on Kit, our email service. We only ask for your email. See our <a href="privacy.html">privacy page</a>.</p></div>
 <ul class="nl-trust"><li>Free</li><li>Leave anytime with one click</li><li>No spam, and we never sell your email</li></ul></div>
 <div class="nl-hero-art"><img src="img/newsletter-hero.webp" width="1200" height="672" alt="Drawing of a tidy room with packed moving boxes and a donate box" loading="eager"></div></section>
 <section class="step"><h2>What is in each email</h2>"""+cards([("heart","Give it a new home","One easy way to donate or sell"),("doc","Rule check","One real city rule, with the source"),("cal","Room of the week","A small 15-minute task"),("truck","Haul-away tips","How to get a fair price")])+"""</section>
@@ -212,8 +211,21 @@ nbody="""<section class="nl-hero"><div class="nl-hero-text"><p class="nl-kicker"
 <li><strong>&#x1F4E3; Sponsor spot</strong> &mdash; if we ever have one, it will be labeled <em>Sponsored</em> at the top. Right now there are none.</li></ol></section>
 <section class="step"><h2>Honest notes</h2><ul><li><strong>Who we are:</strong> the same small team that writes this site's city guides. We do not show subscriber counts or reviews we don't have.</li>
 <li><strong>Money:</strong> some future emails may have clearly labeled affiliate links or a labeled sponsor. That never changes the city rules we share.</li>
-<li><strong>Privacy:</strong> when signups open, we will only ask for your email. We will use it only to send this newsletter, never sell or share it, and you can unsubscribe anytime. Questions: """+CONTACT+""".</li></ul></section>"""
-page(NFN,"Declutter, Move & Downsize Smart: a free newsletter (coming soon)","A free email every other week with simple tips for decluttering, moving, and downsizing, plus real city rules for bulky items. Signups open soon.",nbody)
+<li><strong>Privacy:</strong> we only ask for your email. We use it only to send this newsletter, we never sell or share it, and every email has a one-click unsubscribe link. Details: <a href="privacy.html">privacy page</a>. Questions: """+CONTACT+""".</li></ul></section>"""
+page(NFN,"Declutter, Move & Downsize Smart: a free newsletter","A free email every other week with simple tips for decluttering, moving, and downsizing, plus real city rules for bulky items. Subscribe free.",nbody)
+# --- Privacy page (Counsel 2026-10-27 newsletter fixes) ---
+PFN="privacy.html"; urls.append(PFN); MOD[PFN]="2026-10-28"
+pbody="""<h1>Privacy</h1><p>Last updated: October 27, 2026.</p>
+<h2>This website</h2><p>This site has no accounts, no forms, no ads trackers, and no analytics. Our web host (GitHub Pages) may keep basic server logs, like IP addresses, for security.</p>
+<h2>Our newsletter</h2><ul><li><strong>Email service:</strong> our newsletter is run by Kit (formerly ConvertKit). When you click "Subscribe free," you sign up on Kit's page, not ours. Kit's privacy policy: <a href="https://kit.com/privacy" rel="noopener">kit.com/privacy</a>.</li>
+<li><strong>What we collect:</strong> only your email address. Kit also logs basic data it needs to run email, like signup date, opens and clicks, and IP address.</li>
+<li><strong>How we use it:</strong> only to send this newsletter.</li>
+<li><strong>We never sell or share your email.</strong> No one gets it except Kit, which sends the emails for us.</li>
+<li><strong>Unsubscribe:</strong> every email has a one-click unsubscribe link. No login or password is needed. We stop emailing you right away, and always within 10 business days, as the law requires.</li>
+<li><strong>Sponsors:</strong> any paid spot or affiliate link in an email will be labeled Sponsored or Affiliate link.</li></ul>
+<h2>Children</h2><p>This newsletter is not meant for children under 13.</p>
+<h2>Questions</h2><p>Contact us: """+CONTACT+""".</p>"""
+page(PFN,"Privacy | "+SITE,"How Bulky Item Guide handles your email for the free newsletter: run by Kit, email only, one-click unsubscribe, never sold or shared.",pbody)
 open(f"{OUT}/sitemap.xml","w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{ROOT if u=='index.html' else BASE+'/'+u}</loc><lastmod>{MOD.get(u,CHECKED)}</lastmod></url>" for u in urls)+"</urlset>\n")
 open(f"{OUT}/robots.txt","w").write(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n")
 INDEXNOW_KEY="b7e4c1a9d2f84e6a9c3b5d7f1e2a4c6b"  # public by design (IndexNow protocol); not a secret
