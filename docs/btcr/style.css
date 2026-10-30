@@ -7,3 +7,11 @@ header{background:var(--n);padding:18px 0;border-bottom:3px solid var(--g)}heade
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}.card{background:#fff;border:1px solid #E5E7EB;border-top:4px solid var(--g);border-radius:8px;padding:18px}.card h3{margin:0 0 6px;color:var(--n)}
 .sample{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}.sample img{width:100%;border:1px solid #CBD5E1;border-radius:6px;box-shadow:0 6px 24px rgba(15,42,71,.15)}@media(max-width:720px){.sample{grid-template-columns:1fr}.hero h1{font-size:1.8rem}}
 footer{background:var(--n);color:#CBD5E1;padding:30px 0;font-size:.9rem}footer a{color:var(--g)}
+.signup{background:var(--d);color:#fff;border:2px solid var(--g);border-radius:10px;padding:24px;margin:28px 0;text-align:center}.signup h2{color:#fff;border:0;padding:0;margin:0 0 6px}.signup p{color:#CBD5E1;margin:4px 0}
+.ticker{background:var(--n);color:#fff;padding:12px 0;font-size:.95rem}.ticker .wrap{display:flex;flex-wrap:wrap;gap:8px 22px}.ticker b{color:var(--g)}
+.issue{max-width:760px}.issue img{width:100%;border-radius:6px;border:1px solid #E5E7EB}.kicker{color:var(--g);font-weight:bold;letter-spacing:.08em;font-size:.85rem}.issue h1{font-family:Georgia,serif;color:var(--n);font-size:2rem;line-height:1.2;margin:6px 0 12px}
+.src{font-size:.82rem;color:#64748B;border-left:3px solid #E5E7EB;padding-left:10px}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:12px 0}.stat{background:#fff;border:1px solid #E5E7EB;border-top:4px solid var(--g);border-radius:8px;padding:12px}.stat .v{font-size:1.6rem;font-weight:bold;color:var(--n)}
+table.ppi{width:100%;border-collapse:collapse;background:#fff;margin:12px 0}table.ppi td,table.ppi th{border-bottom:1px solid #E5E7EB;padding:8px;text-align:left}.up{color:#B91C1C;font-weight:bold}.box{background:#fff;border:1px solid #E5E7EB;border-left:5px solid var(--g);border-radius:8px;padding:16px;margin:14px 0}.formula{font-size:1.3rem;font-weight:bold;color:var(--n)}
+.hotcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.hotcols{grid-template-columns:1fr}.issue h1{font-size:1.6rem}}
+.issue section{padding:22px 0}.btn2{background:transparent;border:2px solid var(--g);color:var(--g)}
+.gold{color:var(--g)}
