@@ -1,5 +1,9 @@
 import os, html
 from cities import C, CHECKED, CHECKED_BY
+try:
+    from cities import CHECKED_NOTE
+except ImportError:
+    CHECKED_NOTE = {}
 NCITY=len(C)
 BASE = os.environ.get("BASE","https://nater79.github.io/mattress-couch-disposal-guide")
 OUT="site"; os.makedirs(OUT,exist_ok=True)
@@ -117,19 +121,26 @@ urls=["index.html","about.html"]
 rows=""
 for slug,name,st,pop,agency,src,rules,notes in C:
     CK=CHECKED_BY.get(slug,CHECKED)
+    if slug in CHECKED_NOTE:
+        _l,_u,_d=CHECKED_NOTE[slug]
+        CKG=f'<div><span class="k">Checked</span><a href="{_u}" rel="nofollow"><time datetime="{_d}">{_l}</time></a></div>'
+        CKP=f'<a href="{_u}" rel="nofollow">{_l}</a>'
+    else:
+        CKG=f'<div><span class="k">Last checked</span><time datetime="{CK}">{CK}</time></div>'
+        CKP=f'<strong>Last checked:</strong> {CK}'
     fn=f"{slug}.html"; urls.append(fn)
     ex="".join(f"<li>{n}</li>" for n in notes if "Bye Bye" in n)
     rl="".join(f"<li>{r}</li>" for r in rules)
     other="".join(f'<p class="check">{n}</p>' for n in notes if "Bye Bye" not in n)
     status="Partly verified" if (not rules or other) else "Verified on official page"
     body=f"""<h1>How to get rid of a mattress or couch in {name}, {st}</h1>
-<div class="glance"><div><span class="k">Official source</span><a href="{src}" rel="nofollow">{agency}</a></div><div><span class="k">Last checked</span><time datetime="{CK}">{CK}</time></div><div><span class="k">Status</span><span class="pill {'pill-warn' if status!='Verified on official page' else 'pill-ok'}">{status}</span></div></div>
+<div class="glance"><div><span class="k">Official source</span><a href="{src}" rel="nofollow">{agency}</a></div>{CKG}<div><span class="k">Status</span><span class="pill {'pill-warn' if status!='Verified on official page' else 'pill-ok'}">{status}</span></div></div>
 {cards([("heart","Donate first","Help a neighbor"),("doc","Official rules","Linked source"),("cal","Last checked","Dated every page"),("truck","Hauler options","Ask for a written price")])}
 {DON.format(extra=ex)}
 <section class="step step-city"><h2>Step 2: City pickup and drop-off rules</h2>
 {'<ul>'+rl+'</ul>' if rules else ''}{other}
 <p>Anything not listed here: <strong>check with the city</strong>. We only list rules we could confirm on an official page.</p>
-<p><strong>Official source:</strong> <a href="{src}" rel="nofollow">{agency}</a><br><strong>Last checked:</strong> {CK}</p>
+<p><strong>Official source:</strong> <a href="{src}" rel="nofollow">{agency}</a><br>{CKP}</p>
 </section><section class="step step-other"><h2>Step 3: Other options</h2>
 <p>If the city cannot help, you can hire a licensed hauler. Ask for a written price first. Never pay someone who might dump it illegally.</p>
 {SLOT('hauler-referral')}{SLOT('featured-local-hauler')}{SLOT('mattress-brand-haulaway')}</section>"""
