@@ -26,10 +26,11 @@ def SLOT(name):
     assert not any(w in p["text"].lower() for w in BANNED), "paid placements may not be called recommended/best"
     note="We earn a fee if you book through this link." if p["kind"]=="Affiliate link" else "This business paid to be listed here. We do not rate or review it."
     return f'<div class="slot paid" data-slot="{name}"><span class="label label-paid">{p["kind"]}</span> <a href="{p["url"]}" rel="sponsored nofollow noopener">{p["text"]}</a> <small>{note}</small></div>'
-def disc():
+def disc(where="top"):
     n=sum(1 for k in SLOTS if PAID.get(k))
     state="Right now this page has no paid links, ads, or sponsored listings." if n==0 else f"This page has {n} paid placement(s), each labeled Sponsored or Affiliate link right next to it."
-    return ('<aside class="disc" id="ftc-disclosure"><strong>Disclosure:</strong> This site may earn money from clearly labeled ads, affiliate links, or sponsored listings. '
+    did="ftc-disclosure" if where=="top" else "ftc-disclosure-footer"
+    return (f'<aside class="disc" id="{did}"><strong>Disclosure:</strong> This site may earn money from clearly labeled ads, affiliate links, or sponsored listings. '
             f'Paid placements never change what the city rules say. {state}</aside>')
 
 # --- Redesign helpers: hand-drawn SVG art (no outside assets) ---
@@ -101,7 +102,7 @@ def page(fn,title,desc,body):
 <header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>
 <nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="newsletter.html">Newsletter</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
 <div class="wrap">{crumbs(fn,title)}{disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
-<footer class="site-footer"><div class="wrap"><p class="foot-brand"><img class="foot-logo" src="img/favicon-32.png" width="24" height="24" alt=""> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc()}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="newsletter.html">Newsletter</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
+<footer class="site-footer"><div class="wrap"><p class="foot-brand"><img class="foot-logo" src="img/favicon-32.png" width="24" height="24" alt=""> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc("footer")}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="newsletter.html">Newsletter</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
 open(f"{OUT}/style.css","w").write(CSS)
 os.makedirs(f"{OUT}/img",exist_ok=True); open(f"{OUT}/img/skyline.svg","w").write(SKY)
 _I=os.path.join(os.path.dirname(os.path.abspath(__file__)),"img")
