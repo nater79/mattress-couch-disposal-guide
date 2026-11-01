@@ -1,0 +1,39 @@
+/* 2026-11-01 redesign: loaded only on pages in REDESIGN (how-to-videos, newsletter). Brand teal #0f8b8d, dark teal #0b4f55. */
+.hdr2{position:static;background:#fff;border-bottom:1px solid #e5e7eb}
+.bar2{display:flex;align-items:center;gap:28px;min-height:72px;flex-wrap:nowrap}
+.bar2 .brand-logo{height:44px;width:auto}
+.nav2{display:flex;align-items:center;gap:26px;list-style:none;margin:0;padding:0}
+.nav2>li>a,.nav2 summary{color:#111827;text-decoration:none;font-size:.95rem;font-weight:500;padding:24px 0 22px;border-bottom:2px solid transparent;display:inline-block;cursor:pointer}
+.nav2>li>a:hover,.nav2 summary:hover{color:#0b4f55}
+.nav2 a.active{color:#0b4f55;border-bottom-color:#0f8b8d;font-weight:600}
+.nav2 summary{list-style:none}.nav2 summary::-webkit-details-marker{display:none}
+.nav2 summary::after{content:"";display:inline-block;margin-left:7px;width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-3px) rotate(45deg)}
+.dd{position:relative}.dd-menu{position:absolute;top:100%;left:0;z-index:20;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.1);list-style:none;margin:0;padding:8px;min-width:270px}
+.dd-menu a{display:block;padding:9px 12px;border-radius:6px;color:#111827;text-decoration:none}.dd-menu a:hover{background:#eef7f7}
+.search{margin-left:auto;color:#111827;display:inline-flex;padding:8px}.search svg{width:24px;height:24px}
+.disc2{display:flex;gap:12px;align-items:flex-start;background:#f3f4f6;border:1px solid #d1d5db;border-radius:8px;color:#1f2937;padding:12px 16px;font-size:.92rem;line-height:1.55;margin:16px 0 24px}
+.ico-info{flex:0 0 22px;width:22px;height:22px;color:#111827;margin-top:1px}
+.hero2{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;margin:8px 0 32px;background:none;border:0;padding:0}
+.eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:.78rem;font-weight:700;color:#374151;margin:0 0 14px}
+.hero2 h1{font-size:clamp(2.2rem,4.6vw,3.4rem);line-height:1.05;letter-spacing:-.02em;font-weight:800;margin:0 0 18px;color:#111827}
+.hero2 .lede{font-size:1.12rem;color:#374151;line-height:1.65}
+.hero2-art{margin:0}.hero2-art img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
+.credit{font-size:.75rem;color:#6b7280;margin-top:6px}
+.features{display:grid;grid-template-columns:repeat(4,1fr);list-style:none;margin:0 0 36px;padding:0 0 28px;border-bottom:1px solid #e5e7eb}
+.features li{display:flex;gap:14px;align-items:center;padding:4px 18px;border-left:1px solid #e5e7eb}.features li:first-child{border-left:0;padding-left:0}
+.fico{width:36px;height:36px;color:#0f8b8d;flex:0 0 36px}.features strong{display:block;font-size:.98rem;color:#111827}.features span{font-size:.85rem;color:#6b7280}
+.vcard-sec{margin:0 0 44px;padding-bottom:28px;border-bottom:1px solid #e5e7eb}.vcard-sec>h2{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:800;letter-spacing:-.01em;margin:0 0 18px}
+.vcard{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:center}
+.vthumb video{width:100%;height:auto;border-radius:10px;display:block;background:#000}
+.vbody h3{font-size:1.45rem;margin:4px 0 10px;line-height:1.25}.vbody p{color:#374151}
+.btn-dark{display:inline-flex;align-items:center;gap:10px;background:#0b4f55;color:#fff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:6px}.btn-dark:hover{background:#0f8b8d;color:#fff}
+.ico-s{width:16px;height:16px}
+.chapters{margin-top:22px;border-top:1px solid #e5e7eb;padding-top:14px}.chapters h3{font-size:1.1rem;margin:0 0 10px}
+.tl{display:grid;grid-template-columns:repeat(7,1fr);list-style:none;margin:0;padding:0}
+.tl li{padding:2px 12px;border-left:1px solid #e5e7eb;font-size:.84rem;color:#4b5563}.tl li:first-child{border-left:0;padding-left:0}
+.tl .t{display:block;color:#111827;font-variant-numeric:tabular-nums;font-weight:600}
+.transcript{margin-top:16px}.transcript summary{cursor:pointer;color:#0b4f55;font-weight:600}
+.nl-hero2 .nl-hero-text h1{font-size:clamp(2rem,4.2vw,3rem)}
+@media(max-width:860px){.bar2{flex-wrap:wrap;gap:6px 16px;padding:10px 0}.nav2{flex-wrap:wrap;gap:4px 16px;order:3;width:100%}.nav2>li>a,.nav2 summary{padding:6px 0}.search{margin-left:auto}
+.hero2,.vcard{grid-template-columns:1fr;gap:20px}.features{grid-template-columns:1fr 1fr;gap:14px 0}.features li:nth-child(3){border-left:0;padding-left:0}
+.tl{grid-template-columns:1fr 1fr 1fr;gap:10px 0}.tl li:nth-child(3n+1){border-left:0;padding-left:0}}

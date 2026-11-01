@@ -31,11 +31,26 @@ P["where-to-dump-a-couch-springfield-mo.html"]=("Where to dump a couch in Spring
 <section class="step step-other"><h2>Option 4: Hire a junk removal company</h2><p>Get a written price first. Never pay someone who might dump it illegally. See our <a href="junk-removal-springfield-ozark-mo.html">Springfield and Ozark junk removal guide</a> for company links. (Those are plain links, not affiliate links.)</p></section>
 <p class="check">Do not leave a couch on the roadside or in an empty lot. That is illegal dumping.</p>{END}""")
 V=json.load(open(os.path.join(HERE,"videos.json")))
+VCH=json.load(open(os.path.join(HERE,"video_chapters.json")))["videos"]
+VCRED={'bag-a-mattress': 'Thumbnail photo: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Discarded_mattress_by_trash_bin_(18822330575).jpg" rel="nofollow">Discarded mattress by trash bin</a>&rdquo; by Eric Fischer, licensed under <a href="https://creativecommons.org/licenses/by/2.0/" rel="nofollow">CC BY 2.0</a>. Cropped; play button and length added.',
+ 'couch-curbside': 'Thumbnail photo: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:One-way_to_the_love_seat_-_Flickr_-_michale.jpg" rel="nofollow">One-way to the love seat</a>&rdquo; by Michael McCauslin, licensed under <a href="https://creativecommons.org/licenses/by/2.0/" rel="nofollow">CC BY 2.0</a>. Cropped; play button and length added.',
+ 'mattress-dropoff-springfield': 'Thumbnail photo: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Stacked_Mattresses.jpg" rel="nofollow">Stacked Mattresses</a>&rdquo; by Alan Stanton, licensed under <a href="https://creativecommons.org/licenses/by-sa/2.0/" rel="nofollow">CC BY-SA 2.0</a>. Taken in London, not Springfield. Cropped; play button and length added; this thumbnail is shared under CC BY-SA 2.0.'}
+VBLURB={"bag-a-mattress":"Five steps: check with your hauler, get a mattress bag or thick plastic, bag it from the top down, tape it shut, and set it out on the right day.",
+ "couch-curbside":"Ask about bulk pickup, keep the couch in one piece, empty the cushions, and set it out where your hauler says. No pickup? The landfill option is at the end.",
+ "mattress-dropoff-springfield":"What Springfield's drop-off sites accept, the $20-per-piece fee, the two city sites and Noble Hill Landfill with their hours, and where mattresses get recycled."}
 vb=""
 for slug,(title,caps) in V.items():
     HK={"bag-a-mattress":"Old mattress going out? Bag it the right way first.","couch-curbside":"Couch going to the curb? Do these five things first.","mattress-dropoff-springfield":"Dropping off a mattress in Springfield? Here's what you need to know."}
     tr="".join(f"<li>{c}</li>" for c in caps)
     tr=f'<p><em>Intro:</em> {HK[slug]} {title}</p><ol>{tr}</ol><p><em>Ending:</em> Find more local guides at Bulky Item Guide.</p>'
+    if REDESIGN_ON:
+        n=list(V).index(slug)+1; c=VCH[slug]
+        tl="".join(f'<li><span class="t">{x["t"]}</span><span>{x["label"]}</span></li>' for x in c["chapters"])
+        vb+=(f'<section class="vcard-sec" id="{slug}"><h2>{title}</h2><div class="vcard"><div class="vthumb"><video controls preload="none" width="1280" height="720" poster="img/video2/thumb-{slug}.jpg" class="vid"><source src="img/video/{slug}.mp4" type="video/mp4">Your browser can\'t play this video. Read the steps below.</video><p class="credit">{VCRED[slug]}</p></div>'
+             f'<div class="vbody"><p class="eyebrow">Video {n} of {len(V)} &middot; {c["duration"]}</p><h3>{title}</h3><p>{VBLURB[slug]}</p><p><a class="btn-dark" href="img/video/{slug}.mp4">{PLAY_SVG} Watch video</a></p></div></div>'
+             f'<div class="chapters"><h3>In this video</h3><ol class="tl">{tl}</ol></div>'
+             f'<details class="transcript"><summary>Transcript (what the video says and shows)</summary>{tr}</details></section>')
+        continue
     vb+=f'<section class="step step-city"><h2>{title}</h2><video controls preload="none" width="854" height="480" poster="img/video/{slug}.jpg" class="vid"><source src="img/video/{slug}.mp4" type="video/mp4">Your browser can\'t play this video. Read the steps below.</video><h3>Transcript (what the video says and shows)</h3>{tr}</section>'
 P["how-to-videos.html"]=("How-to videos: bag a mattress, set out a couch, Springfield drop-off","Short how-to videos with captions and a voiceover: how to bag a mattress, get a couch ready for bulk pickup, and use Springfield, MO's mattress drop-off.",f"""<h1>How-to videos</h1><p class="lede">Short videos with captions and a voiceover. Each one has a written transcript under it. Facts come from the City of Springfield and Republic Services pages, checked {CK}.</p>{vb}<p>Sources:{S(M,"Springfield Mattress Recycling")}{S(L,"Noble Hill Landfill")}{S(REP,"Republic Services bulk pickup")}</p>{END}""")
 

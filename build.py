@@ -37,6 +37,41 @@ def disc(where="top"):
     return (f'<aside class="disc" id="{did}"><strong>Disclosure:</strong> This site may earn money from clearly labeled ads, affiliate links, or sponsored listings. '
             f'Paid placements never change what the city rules say. {state}</aside>')
 
+# --- 2026-11-01 redesign (STAGED; pending Counsel). Only pages in REDESIGN get the new header/hero/cards. ---
+REDESIGN_ON=os.environ.get("ATLAS_REDESIGN","1")=="1"
+REDESIGN={"how-to-videos.html","newsletter.html"} if REDESIGN_ON else set()
+PLAY_SVG='<svg class="ico-s" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>'
+INFO_SVG='<svg class="ico-info" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7.5v.5" stroke-linecap="round"/></svg>'
+SEARCH_SVG='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>'
+RICONS={"film":'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/><path d="M10.5 9.5l4 2.5-4 2.5z"/>',
+ "doc":'<path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h7M9 8h4"/>',
+ "bank":'<path d="M3 10l9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/>',
+ "truck":'<path d="M2 7h12v9H2zM14 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+ "mail":'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'}
+def rico(n): return f'<svg class="fico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{RICONS[n]}</svg>'
+def features(items,cls=""): return f'<ul class="features {cls}">'+"".join(f'<li>{rico(i)}<div><strong>{t}</strong><span>{d}</span></div></li>' for i,t,d in items)+'</ul>'
+def header2(fn):
+    cur=lambda f:' class="active" aria-current="page"' if fn==f else ''
+    return ('<header class="site-header hdr2"><div class="wrap bar2"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>'
+     '<nav aria-label="Main"><ul class="nav2"><li class="dd"><details><summary>Find your city</summary><ul class="dd-menu"><li><a href="index.html#cities">All cities (A to Z)</a></li><li><a href="springfield-mo-bulk-trash-pickup.html">Springfield, MO bulk pickup</a></li><li><a href="where-to-dump-a-couch-springfield-mo.html">Where to dump a couch (Springfield)</a></li><li><a href="mattress-recycling-fee-springfield-mo.html">Mattress recycling fee (Springfield)</a></li></ul></details></li>'
+     f'<li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html"{cur("how-to-videos.html")}>How-to videos</a></li><li><a href="newsletter.html"{cur("newsletter.html")}>Newsletter</a></li><li><a href="about.html">About &amp; how we check</a></li></ul></nav>'
+     f'<a class="search" href="index.html#cities" aria-label="Search: find your city in the full list">{SEARCH_SVG}</a></div></header>')
+def disc2(): return disc().replace('<aside class="disc" id="ftc-disclosure">','<aside class="disc disc2" id="ftc-disclosure">'+INFO_SVG+'<div>',1).replace('</aside>','</div></aside>')
+HERO2={"how-to-videos.html":dict(eyebrow="How-to videos",img="hero-couch-curb",alt="Photo of a worn couch left on a street curb",w=1200,h=900,credit='Photo: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Couch_left_on_a_curb.jpg" rel="nofollow">Couch left on a curb</a>&rdquo; by Bluestspruce, dedicated to the public domain under <a href="https://creativecommons.org/publicdomain/zero/1.0/" rel="nofollow">CC0 1.0</a>.',
+  feats=[("film","Watch videos","Short step-by-step guides"),("doc","Read transcripts","Every word, written out"),("bank","City rules","From official Springfield pages"),("truck","Junk removal","Local options")]),
+ "newsletter.html":dict(eyebrow="Free newsletter",img="nl-moving-boxes",alt="Photo of stacked cardboard moving boxes",w=1200,h=900,credit='Photo: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Some_old_moving_boxes_from_Sweden.jpg" rel="nofollow">Some old moving boxes from Sweden</a>&rdquo; by Boivie, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="nofollow">CC BY 4.0</a>. Cropped.',feats=None)}
+def herofy2(fn,body):
+    h=HERO2[fn]
+    if fn=="newsletter.html":
+        m=re.search(r'<div class="nl-hero-art">.*?</div></section>',body,re.S)
+        body=body.replace('<section class="nl-hero">','<section class="hero2 nl-hero2">',1).replace('<p class="nl-kicker">Free newsletter</p>','<p class="eyebrow">Free newsletter</p>',1)
+        body=re.sub(r'<div class="nl-hero-art">.*?</div></section>',f'<figure class="hero2-art"><picture><source srcset="img/photos/{h["img"]}.webp" type="image/webp"><img src="img/photos/{h["img"]}.jpg" width="{h["w"]}" height="{h["h"]}" alt="{h["alt"]}" loading="eager"></picture><figcaption class="credit">{h["credit"]}</figcaption></figure></section>',body,count=1,flags=re.S)
+        return body
+    m=re.match(r'\s*(<h1>.*?</h1>)\s*(<p class="lede">.*?</p>)?',body,re.S)
+    return (f'<section class="hero2"><div class="hero2-text"><p class="eyebrow">{h["eyebrow"]}</p>{m.group(1)}{m.group(2) or ""}</div>'
+     f'<figure class="hero2-art"><picture><source srcset="img/photos/{h["img"]}.webp" type="image/webp"><img src="img/photos/{h["img"]}.jpg" width="{h["w"]}" height="{h["h"]}" alt="{h["alt"]}" loading="eager"></picture><figcaption class="credit">{h["credit"]}</figcaption></figure></section>'
+     +(features(h["feats"]) if h["feats"] else "")+body[m.end():])
+
 # --- Redesign helpers: hand-drawn SVG art (no outside assets) ---
 SKY="""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="Drawing of a city skyline with a small truck"><rect width="640" height="300" fill="#e8f6f4"/><circle cx="520" cy="70" r="34" fill="#ffd36e"/><g fill="#b9e3dd"><rect x="20" y="120" width="60" height="140"/><rect x="90" y="80" width="50" height="180"/><rect x="150" y="140" width="70" height="120"/><rect x="230" y="60" width="44" height="200"/><rect x="284" y="110" width="66" height="150"/><rect x="360" y="90" width="40" height="170"/><rect x="410" y="130" width="80" height="130"/><rect x="500" y="100" width="54" height="160"/><rect x="564" y="140" width="60" height="120"/></g><g fill="#fff" opacity=".8"><rect x="100" y="95" width="10" height="12"/><rect x="120" y="95" width="10" height="12"/><rect x="100" y="120" width="10" height="12"/><rect x="240" y="80" width="8" height="12"/><rect x="256" y="80" width="8" height="12"/><rect x="240" y="104" width="8" height="12"/><rect x="368" y="110" width="8" height="12"/><rect x="384" y="110" width="8" height="12"/><rect x="512" y="120" width="10" height="12"/><rect x="530" y="120" width="10" height="12"/></g><rect y="258" width="640" height="42" fill="#0f766e"/><rect y="276" width="640" height="4" fill="#fff" opacity=".5"/><g transform="translate(190 186)"><rect x="0" y="10" width="150" height="62" rx="6" fill="#14b8a6"/><path d="M150 30h42l26 26v16h-68z" fill="#0d9488"/><path d="M160 36h28l18 18h-46z" fill="#e8f6f4"/><rect x="20" y="24" width="40" height="30" rx="3" fill="#fff" opacity=".9"/><rect x="70" y="30" width="60" height="24" rx="3" fill="#fff" opacity=".7"/><circle cx="40" cy="76" r="14" fill="#1f2937"/><circle cx="40" cy="76" r="6" fill="#e5e7eb"/><circle cx="180" cy="76" r="14" fill="#1f2937"/><circle cx="180" cy="76" r="6" fill="#e5e7eb"/></g></svg>"""
 ICONS={
@@ -112,16 +147,21 @@ def SIGNUP(pos, city):
 import json as _gj
 FORM_GATE=set(_gj.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"form_gate.json")))["slugs"]) if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)),"form_gate.json")) else set()
 def SIG(pos,slug,city): return SIGNUP(pos,city) if slug in FORM_GATE else ""
+def header1(fn): return f"""<header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>
+<nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="newsletter.html">Newsletter</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>"""
 def page(fn,title,desc,body):
-    body=herofy(fn,body)+REL.get(fn,"")+(NL_CARD if fn!="newsletter.html" else "")
+    body=(herofy2(fn,body) if fn in REDESIGN else herofy(fn,body))+REL.get(fn,"")+(NL_CARD if fn!="newsletter.html" else "")
     canon=ROOT if fn=="index.html" else ROOT+fn
     open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC.replace("form-action 'none'","form-action https://app.kit.com") if fn[:-5] in FORM_GATE else HEAD_SEC}
-<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css"><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="img/favicon-180.png">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
+<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css">{'<link rel="stylesheet" href="redesign.css">' if fn in REDESIGN else ''}<link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="img/favicon-180.png">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>
-<nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="newsletter.html">Newsletter</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
-<div class="wrap">{crumbs(fn,title)}{disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
+{header2(fn) if fn in REDESIGN else header1(fn)}
+<div class="wrap">{crumbs(fn,title)}{disc2() if fn in REDESIGN else disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
 <footer class="site-footer"><div class="wrap"><p class="foot-brand"><img class="foot-logo" src="img/favicon-32.png" width="24" height="24" alt=""> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc("footer")}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="newsletter.html">Newsletter</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
+if REDESIGN_ON:
+    shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"redesign.css"),f"{OUT}/redesign.css")
+    shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","photos"),f"{OUT}/img/photos",dirs_exist_ok=True)
+    shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","video2"),f"{OUT}/img/video2",dirs_exist_ok=True)
 open(f"{OUT}/style.css","w").write(CSS+(("\n"+open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"signup-style.css")).read()) if FORM_GATE else ""))
 os.makedirs(f"{OUT}/img",exist_ok=True); open(f"{OUT}/img/skyline.svg","w").write(SKY)
 _I=os.path.join(os.path.dirname(os.path.abspath(__file__)),"img")
