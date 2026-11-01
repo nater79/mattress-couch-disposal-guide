@@ -1,0 +1,21 @@
+{
+ "note": "Counsel-cleared pages allowed to carry the Kit form (commit bcd652b). Adding a slug requires Counsel clearance; the nightly gate may only REMOVE, never add.",
+ "cleared": [
+  "austin",
+  "boston",
+  "columbus",
+  "dallas",
+  "denver",
+  "el-paso",
+  "houston",
+  "indianapolis",
+  "jacksonville",
+  "nashville",
+  "new-york",
+  "philadelphia",
+  "portland",
+  "san-antonio",
+  "seattle",
+  "washington-dc"
+ ]
+}

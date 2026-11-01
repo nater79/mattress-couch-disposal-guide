@@ -9,6 +9,7 @@ def get(u):
     try:
         r=urllib.request.urlopen(urllib.request.Request(u,headers={"User-Agent":"atlas-live-check"}),timeout=20); return r.status,r.read().decode("utf-8","replace")
     except urllib.error.HTTPError as e: return e.code,""
+CLEARED=set(json.load(open(os.path.join(os.path.dirname(__file__),"..","form_cleared.json")))["cleared"])
 fails=0; out=[]
 files=sorted(os.path.basename(f) for f in glob.glob(SITE+"/*.html"))
 links=set()
@@ -22,7 +23,9 @@ for f in files:
     j=re.findall(r'<script type="application/ld\+json">(.*?)</script>',h,re.S)
     try: d=[json.loads(x) for x in j]; r["jsonld"]=len(d)>=1 and d[0]["@type"]==("WebSite" if f=="index.html" else "BreadcrumbList") and all(x["@type"]=="Article" and x.get("dateModified") for x in d[1:]) and len(d)<=2
     except Exception: r["jsonld"]=False
-    r["no_inline_or_3p"]=not re.search(r'style=|<style|<form|<iframe|<script(?! type="application/ld\+json")',h)
+    slug=f[:-5]; forms=re.findall(r'<form[^>]*>',h)
+    kit_ok=all('action="https://app.kit.com/forms/10123997/subscriptions"' in x for x in forms)
+    r["no_inline_or_3p"]=not re.search(r'style=|<style|<iframe|<script(?! type="application/ld\+json")',h) and (not forms or (slug in CLEARED and kit_ok))
     links|=set(re.findall(r'href="([^"#:]+)"',h))
     ok=s==200 and all(v for k,v in r.items() if k!="code"); fails+=not ok
     out.append(("PASS " if ok else "FAIL ")+f+" "+" ".join(f"{k}={'Y' if v is True else 'N' if v is False else v}" for k,v in r.items()))
