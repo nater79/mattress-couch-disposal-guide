@@ -97,17 +97,32 @@ def article(fn,title,desc,canon):
 NL_CARD=('<aside class="nl-card" aria-labelledby="nl-card-h"><div><p class="nl-kicker">Free email newsletter</p><h2 id="nl-card-h">Declutter, Move &amp; Downsize Smart</h2>'
  '<p>One short email every other week: what to keep, what to give away, and how to get rid of the rest without a fine. About a 3-minute read.</p></div>'
  '<p><a class="btn" href="https://lucca-4.kit.com/a1f664d024" rel="noopener">Subscribe free</a> <a href="newsletter.html">See what is inside</a></p><p class="nl-status">Signup is handled by Kit (our email service). <a href="privacy.html">Privacy</a></p></aside>')
+# --- Lead-magnet signup (Counsel-cleared 2026-10-31). Forms appear ONLY on city pages listed in form_gate.json,
+# which update_form_gate.py rewrites from verify_page --staged results (PASS -> form; FAIL -> no form).
+KIT_FORM_ID="10123997"
+def SIGNUP(pos, city):
+    hid=f"lm-{pos}-h"
+    return (f'<aside class="lm-signup lm-{pos}" aria-labelledby="{hid}"><h2 id="{hid}">Free checklist for {city}</h2>'
+     '<p>Get a free one-page checklist: how to get rid of a mattress or couch for free or cheap in your city.</p>'
+     f'<form class="lm-form" action="https://app.kit.com/forms/{KIT_FORM_ID}/subscriptions" method="post">'
+     f'<label for="lm-email-{pos}">Email address</label> <input id="lm-email-{pos}" type="email" name="email_address" required autocomplete="email"> '
+     '<button class="btn" type="submit">Send me the checklist</button></form>'
+     '<p class="lm-fine">We\'ll email you the checklist and occasional tips. Unsubscribe anytime. We never sell your email. '
+     'Signup is handled by Kit (our email service). <a href="privacy.html">Privacy</a> &middot; <a href="#ftc-disclosure">Disclosure</a></p></aside>')
+import json as _gj
+FORM_GATE=set(_gj.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"form_gate.json")))["slugs"]) if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)),"form_gate.json")) else set()
+def SIG(pos,slug,city): return SIGNUP(pos,city) if slug in FORM_GATE else ""
 def page(fn,title,desc,body):
     body=herofy(fn,body)+REL.get(fn,"")+(NL_CARD if fn!="newsletter.html" else "")
     canon=ROOT if fn=="index.html" else ROOT+fn
-    open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC}
+    open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC.replace("form-action 'none'","form-action https://app.kit.com") if fn[:-5] in FORM_GATE else HEAD_SEC}
 <title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css"><link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="img/favicon-180.png">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>
 <nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="newsletter.html">Newsletter</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>
 <div class="wrap">{crumbs(fn,title)}{disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
 <footer class="site-footer"><div class="wrap"><p class="foot-brand"><img class="foot-logo" src="img/favicon-32.png" width="24" height="24" alt=""> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc("footer")}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="newsletter.html">Newsletter</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
-open(f"{OUT}/style.css","w").write(CSS)
+open(f"{OUT}/style.css","w").write(CSS+(("\n"+open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"signup-style.css")).read()) if FORM_GATE else ""))
 os.makedirs(f"{OUT}/img",exist_ok=True); open(f"{OUT}/img/skyline.svg","w").write(SKY)
 _I=os.path.join(os.path.dirname(os.path.abspath(__file__)),"img")
 for _f in ("og.png","logo-header.webp","logo-header.png","favicon-32.png","favicon-180.png"): shutil.copy(os.path.join(_I,_f),f"{OUT}/img/{_f}")
@@ -141,9 +156,9 @@ for slug,name,st,pop,agency,src,rules,notes in C:
 {'<ul>'+rl+'</ul>' if rules else ''}{other}
 <p>Anything not listed here: <strong>check with the city</strong>. We only list rules we could confirm on an official page.</p>
 <p><strong>Official source:</strong> <a href="{src}" rel="nofollow">{agency}</a><br>{CKP}</p>
-</section><section class="step step-other"><h2>Step 3: Other options</h2>
+</section>{SIG("inline",slug,name)}<section class="step step-other"><h2>Step 3: Other options</h2>
 <p>If the city cannot help, you can hire a licensed hauler. Ask for a written price first. Never pay someone who might dump it illegally.</p>
-{SLOT('hauler-referral')}{SLOT('featured-local-hauler')}{SLOT('mattress-brand-haulaway')}</section>"""
+{SLOT('hauler-referral')}{SLOT('featured-local-hauler')}{SLOT('mattress-brand-haulaway')}</section>{SIG("bottom",slug,name)}"""
     MOD[fn]=CK
     near=[c for c in C if c[2]==st and c[0]!=slug][:3] or []
     others=near+[c for c in C if c[0]!=slug and c not in near][:max(0,4-len(near))]
@@ -195,7 +210,7 @@ exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"local_pages.p
 page(JFN,f"Junk removal in Springfield and Ozark, MO ({JCHECK[:4]} fees and drop-off sites)","How to get rid of junk, couches, and mattresses in Springfield and Ozark, Missouri: drop-off sites, hours, fees, and pickup options, with official sources.",jbody)
 
 page("index.html",f"{SITE}: get rid of a mattress or couch in your city","How to get rid of a mattress or couch in the 25 biggest US cities. Donate first, then official city rules with sources.",
- f"<h1>Get rid of your old mattress or couch, the right way</h1><p class=\"lede\">Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p class='ctas'><a class='btn' href='#cities'>Find my city's rules</a> <a class='btn btn-ghost' href='junk-removal-springfield-ozark-mo.html'>New: Junk removal in Springfield &amp; Ozark, MO</a></p>{cards([('doc','Official rules','Linked on every page'),('cal','Last checked','Date on every page'),('shield','No paid rankings','No reviews or ratings'),('heart','Donate first','Keep it out of the landfill')])}<section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are the {NCITY} largest in the US by 2023 Census Bureau population estimates.</p></section>")
+ f"<h1>Get rid of your old mattress or couch, the right way</h1><p class=\"lede\">Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p class='ctas'><a class='btn' href='#cities'>Find my city's rules</a> <a class='btn btn-ghost' href='junk-removal-springfield-ozark-mo.html'>New: Junk removal in Springfield &amp; Ozark, MO</a></p>{cards([('doc','Official rules','Linked on every page'),('cal','Last checked','Date on every page'),('shield','No paid rankings','No reviews or ratings'),('heart','Donate first','Keep it out of the landfill')])}<section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are picked from the largest in the US by 2023 Census Bureau population estimates. More are added as we check them.</p></section>")
 page("about.html",f"About {SITE}","How the Bulky Item Guide checks city rules: official sources only, a last-checked date on every page, and clear labels on any paid link.",f"""<h1>About this guide and how we check it</h1>
 <p>We want to make it easy to do the right thing with old furniture: give it away if you can, and follow city rules if you can't. That helps neighbors and cuts down on illegal dumping.</p>
 <h2>How we check</h2><ul><li>Every rule comes from an official city (or city-contracted) web page. We link to it.</li>
@@ -227,17 +242,18 @@ nbody="""<section class="nl-hero"><div class="nl-hero-text"><p class="nl-kicker"
 page(NFN,"Declutter, Move & Downsize Smart: a free newsletter","A free email every other week with simple tips for decluttering, moving, and downsizing, plus real city rules for bulky items. Subscribe free.",nbody)
 # --- Privacy page (Counsel 2026-10-27 newsletter fixes) ---
 PFN="privacy.html"; urls.append(PFN); MOD[PFN]="2026-10-28"
-pbody="""<h1>Privacy</h1><p>Last updated: October 27, 2026.</p>
-<h2>This website</h2><p>This site has no accounts, no forms, no ads trackers, and no analytics. Our web host (GitHub Pages) may keep basic server logs, like IP addresses, for security.</p>
-<h2>Our newsletter</h2><ul><li><strong>Email service:</strong> our newsletter is run by Kit (formerly ConvertKit). When you click "Subscribe free," you sign up on Kit's page, not ours. Kit's privacy policy: <a href="https://kit.com/privacy" rel="noopener">kit.com/privacy</a>.</li>
-<li><strong>What we collect:</strong> only your email address. Kit also logs basic data it needs to run email, like signup date, opens and clicks, and IP address.</li>
-<li><strong>How we use it:</strong> only to send this newsletter.</li>
-<li><strong>We never sell or share your email.</strong> No one gets it except Kit, which sends the emails for us.</li>
+pbody="""<h1>Privacy</h1><p>Last updated: October 31, 2026.</p>
+<h2>This website</h2><p>This site has no accounts, no ads trackers, and no analytics. The only form on the site is the free checklist signup, which sends your email straight to Kit (see below). Our web host (GitHub Pages) may keep basic server logs, like IP addresses, for security.</p>
+<h2>Checklist signup and newsletter</h2><ul><li><strong>What we collect:</strong> your email address, plus the signup source that Kit records (which page or form you signed up on). Kit also logs basic data it needs to run email, like signup date, opens and clicks, and IP address.</li>
+<li><strong>Why:</strong> to send you the free checklist you asked for, and occasional tips about getting rid of bulky items. Nothing else.</li>
+<li><strong>Who processes it:</strong> Kit (formerly ConvertKit) stores your email and sends our emails for us, as our processor. Kit's privacy policy: <a href="https://kit.com/privacy" rel="noopener">kit.com/privacy</a>.</li>
+<li><strong>Double opt-in:</strong> after you sign up, Kit sends a confirmation email. You are not added to the list until you click the link in it.</li>
 <li><strong>Unsubscribe:</strong> every email has a one-click unsubscribe link. No login or password is needed. We stop emailing you right away, and always within 10 business days, as the law requires.</li>
+<li><strong>We never sell, share, rent or swap your email.</strong> No one gets it except Kit, which sends the emails for us.</li>
 <li><strong>Sponsors:</strong> any paid spot or affiliate link in an email will be labeled Sponsored or Affiliate link.</li></ul>
 <h2>Children</h2><p>This newsletter is not meant for children under 13.</p>
-<h2>Questions</h2><p>Contact us: """+CONTACT+""".</p>"""
-page(PFN,"Privacy | "+SITE,"How Bulky Item Guide handles your email for the free newsletter: run by Kit, email only, one-click unsubscribe, never sold or shared.",pbody)
+<h2>Contact</h2><p>To see or delete your data, email us at the address below.</p><p>Email: <a href="mailto:navexiateam@navexia.net">navexiateam@navexia.net</a> (for replies to our emails only).<br>Mailing address: 117 S Lexington St, Ste 100, Harrisonville, MO 64701-2444.</p>"""
+page(PFN,"Privacy | "+SITE,"How Bulky Item Guide handles your email for the free checklist and newsletter: run by Kit, double opt-in, one-click unsubscribe, never sold, shared, rented or swapped.",pbody)
 open(f"{OUT}/sitemap.xml","w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{ROOT if u=='index.html' else BASE+'/'+u}</loc><lastmod>{MOD.get(u,CHECKED)}</lastmod></url>" for u in urls)+"</urlset>\n")
 open(f"{OUT}/robots.txt","w").write(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n")
 INDEXNOW_KEY="b7e4c1a9d2f84e6a9c3b5d7f1e2a4c6b"  # public by design (IndexNow protocol); not a secret
@@ -250,4 +266,4 @@ for _f in _g.glob(f"{OUT}/*.html"):
     _h=open(_f).read()
     assert "Content-Security-Policy" in _h and "script-src 'none'" in _h and 'name="referrer"' in _h and 'rel="canonical"' in _h and "application/ld+json" in _h, f"missing head tags: {_f}"
     assert _h.count("<title>")==1 and 'property="og:title"' in _h, f"missing title/og: {_f}"
-    assert not _re.search(r'style=|<style|<form|<iframe|<script(?! type="application/ld\+json")',_h), f"inline style/script/form: {_f}"
+    assert not _re.search(r'style=|<style|<form|<iframe|<script(?! type="application/ld\+json")',_re.sub(r'<form class="lm-form" action="https://app\.kit\.com/forms/[A-Za-z0-9_]+/subscriptions" method="post">','',_h)), f"inline style/script/form: {_f}"
