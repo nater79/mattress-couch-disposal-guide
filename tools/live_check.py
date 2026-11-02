@@ -29,6 +29,14 @@ for f in files:
     links|=set(re.findall(r'href="([^"#:]+)"',h))
     ok=s==200 and all(v for k,v in r.items() if k!="code"); fails+=not ok
     out.append(("PASS " if ok else "FAIL ")+f+" "+" ".join(f"{k}={'Y' if v is True else 'N' if v is False else v}" for k,v in r.items()))
+# --- BTCR form gate (separate from city form 10123997) ---
+BTCR_ACT='action="https://app.kit.com/forms/10134394/subscriptions"'
+BTCR_FORM_PAGES={"btcr/index.html","btcr/issue-1.html"}
+for f in ["btcr/index.html","btcr/issue-1.html","btcr/privacy.html"]:
+    s,h=get(BASE+f); forms=re.findall(r'<form[^>]*>',h)
+    ok=s==200 and "FTC disclosure" in h and "script-src 'none'" in h and not re.search(r'<script(?! type="application/ld\+json")|<iframe',h)
+    if forms: ok=ok and f in BTCR_FORM_PAGES and all(BTCR_ACT in x and 'method="post"' in x for x in forms) and "form-action https://app.kit.com;" in h and "10123997" not in h
+    fails+=not ok; out.append(f"{'PASS' if ok else 'FAIL'} {f} forms={len(forms)}")
 for f in ["sitemap.xml","robots.txt","style.css"]:
     s,_=get(BASE+f); fails+=s!=200; out.append(f"{'PASS' if s==200 else 'FAIL'} {f} code={s}")
 for l in sorted(links):

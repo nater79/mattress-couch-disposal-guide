@@ -2,7 +2,7 @@
 CHECKED = "2026-10-25"
 CHECKED_NOTE = {"louisville": ("Confirmed from the city page as archived 2026-10-03", "https://web.archive.org/web/20261003113921/https://louisvilleky.gov/government/public-works/illegal-dumping", "2026-10-03")}  # per-city archive-confirmed label
 CHECKED_BY = {"detroit": "2026-10-26", "portland": "2026-10-27", "louisville": "2026-10-30", "baltimore": "2026-10-31", "albuquerque": "2026-11-01"}  # per-city check dates; others use CHECKED
-CA = ["If a store delivers a new mattress to you in California, state law says the store must offer to pick up your old one at no extra cost. If it came by a shipping company, the store must offer to arrange pickup within 30 days. Stores may refuse a contaminated mattress (<a href=\"https://calrecycle.ca.gov/epr/enforcement/mattress-epr-enforcement/\">CalRecycle</a>; <a href=\"https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?article=7.&amp;chapter=21.&amp;division=30.&amp;lawCode=PRC&amp;part=3.&amp;title=\">Cal. Public Resources Code 42992</a>). You can also drop off a mattress for free at Bye Bye Mattress sites: <a href=\"https://byebyemattress.com/california/\">byebyemattress.com/california</a>."]
+CA = ["If a store delivers a new mattress to you in California, state law says the store must offer to pick up your old one at no extra cost. If it came by a shipping company, the store must offer to arrange pickup within 30 days. Stores may refuse a contaminated mattress (<a href=\"https://calrecycle.ca.gov/epr/enforcement/mattress-epr-enforcement/\">CalRecycle</a>; Cal. Public Resources Code 42992, as summarized on that CalRecycle page). You can also drop off a mattress for free at Bye Bye Mattress sites: <a href=\"https://byebyemattress.com/california/\">byebyemattress.com/california</a>."]
 C = [
 ("new-york","New York City","NY",8258035,"NYC Department of Sanitation (DSNY)","https://www.nyc.gov/site/dsny/collection/get-rid-of/furniture-mattresses.page",[
  "Large furniture is picked up at the curb for free.",
@@ -18,7 +18,7 @@ C = [
  "The city also runs free monthly drop-off events at five sites. Check the city page for 2026 dates."],CA),
 ("chicago","Chicago","IL",2664452,"Chicago Department of Streets and Sanitation","https://www.chicago.gov/city/en/depts/streets/provdrs/streets_san/svcs/sanitation_ordinance.html",[
  "City crews collect garbage from single-family homes and buildings with 4 units or fewer. Buildings with 5 or more units must hire a private hauler.",
- "Before you put out any large item, the city says to arrange a bulk pickup with your Streets and Sanitation ward superintendent. You can reach them through 311 (3-1-1, or 312-744-5000 from outside Chicago).",
+ "Before you put out any large item, the city says to arrange a bulk pickup with your Streets and Sanitation ward superintendent. You can reach them through 311 (3-1-1, or 312-744-5000 from outside Chicago, per the <a href=\"https://www.chicago.gov/city/en/depts/311.html\">City of Chicago 311 page</a>).",
  "Take the doors or lids off old refrigerators and freezers before putting them out."],[
  "The city's pages do not say whether mattresses are accepted, or give limits or set-out times. Please check with the city through 311 before setting a mattress out."]),
 ("houston","Houston","TX",2314157,"Houston Solid Waste Management","https://www.houstontx.gov/solidwaste/heavytrash.html",[
@@ -32,7 +32,7 @@ C = [
  "Book at least 3 business days ahead. You get 4 pickups a year.",
  "Put items out no more than 7 days before your date, and by 5:30 a.m. on the day.",
  "Limit: one pile, up to 10 cubic yards, within 5 feet of the street."],[
- "Mattresses: the city code lists mattresses as not accepted in normal bulk collection (<a href=\"https://phoenix.municipal.codes/CC/27-22\">Phoenix City Code 27-22</a>). Please check with the city before setting one out. The city's bulk page says furniture is often bulk trash, but the code says furniture is not accepted, so please ask before setting out a couch too (602-262-6251)."]),
+ "Mattresses and couches: the city's bulk page does not say whether they are accepted, and we could not re-check the city code this week. Please check with the city before setting either one out (602-262-6251)."]),
 ("philadelphia","Philadelphia","PA",1550542,"Philadelphia Department of Sanitation","https://www.phila.gov/departments/department-of-sanitation/about/rules-and-regulations/residential-trash-and-recycling-rules/",[
  "Couches, mattresses and box springs can go out with regular trash. Limit: 2 items per week.",
  "Mattresses and box springs must be sealed in plastic mattress bags for curbside pickup. Unwrapped mattresses can be fined.",
@@ -127,8 +127,8 @@ C = [
  "Call (915) 212-6000, Mon-Fri 7 a.m.-2 p.m. Mattresses, box springs and furniture are accepted.",
  "Set items at the curb by 6 a.m., at least 5 feet from bins, mailboxes and cars.",
  "Usable furniture can go to the city's free Country Store at 3510 Confederate Dr. (water bill and ID needed)."],[]),
-("las-vegas","Las Vegas","NV",656274,"City of Las Vegas Code 9.08 and Republic Services of Southern Nevada (the city's trash hauler)","https://www.republicservices.com/sites/default/files/legacy_documents/Muni/Southern%20Nevada/Southern-NV-Bulk-item-setout.pdf",[
- "Homes with city trash service get bulky item pickup every other week (<a href=\"https://library.municode.com/nv/las_vegas/codes/code_of_ordinances?nodeId=TIT9HESA_CH9.08COMASOWAREMA\">Las Vegas Code 9.08</a>). The city code lists mattresses as bulky items.",
+("las-vegas","Las Vegas","NV",656274,"City of Las Vegas and Republic Services of Southern Nevada (the city's trash hauler)","https://www.republicservices.com/sites/default/files/legacy_documents/Muni/Southern%20Nevada/Southern-NV-Bulk-item-setout.pdf",[
+ "Homes with city trash service get bulky item pickup every other week (<a href=\"https://files.lasvegasnevada.gov/finance/Franchise/Republic-Services-Rates.pdf\">City of Las Vegas rate sheet for Republic Services</a>). Republic's set-out rules cover mattresses (see below).",
  "Find your bulk week on <a href=\"https://www.republicservices.com/municipality/southern-nevada\">Republic Services' schedule page</a>, or call 702-735-5151.",
  "Items must be 6 feet long or less and placed at the curb. Crews will not take items from private property.",
  "Soiled mattresses must be wrapped in plastic. No loose trash, and no refrigerators or other items with Freon."],[]),

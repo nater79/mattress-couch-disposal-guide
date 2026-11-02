@@ -15,3 +15,5 @@ table.ppi{width:100%;border-collapse:collapse;background:#fff;margin:12px 0}tabl
 .hotcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.hotcols{grid-template-columns:1fr}.issue h1{font-size:1.6rem}}
 .issue section{padding:22px 0}.btn2{background:transparent;border:2px solid var(--g);color:var(--g)}
 .gold{color:var(--g)}
+
+.btcr-form{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:14px 0 6px}.btcr-form label{position:absolute;left:-9999px}.btcr-form input{padding:10px 12px;border-radius:6px;border:1px solid #CBD5E1;min-width:240px;font-size:1rem}.btcr-form button{cursor:pointer;border:0}.btcr-fine a{color:inherit;text-decoration:underline}
