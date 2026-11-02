@@ -4,6 +4,7 @@
  "slugs": [
   "austin",
   "boston",
+  "columbus",
   "dallas",
   "denver",
   "el-paso",
@@ -14,7 +15,6 @@
   "new-york",
   "philadelphia",
   "portland",
-  "san-antonio",
   "seattle",
   "washington-dc"
  ]
