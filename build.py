@@ -135,9 +135,14 @@ NL_CARD=('<aside class="nl-card" aria-labelledby="nl-card-h"><div><p class="nl-k
 # --- Lead-magnet signup (Counsel-cleared 2026-10-31). Forms appear ONLY on city pages listed in form_gate.json,
 # which update_form_gate.py rewrites from verify_page --staged results (PASS -> form; FAIL -> no form).
 KIT_FORM_ID="10123997"
+# A/B test 2026-11-02 (headline only): group B cities get a task-first headline; group A keeps the control.
+# Measured by the page URL Kit records as each subscriber's signup source. Same form, same copy otherwise.
+AB_HEADLINE_B={"boston","dallas","el-paso","indianapolis","nashville","philadelphia","seattle"}
+_AB_CUR=[None]
 def SIGNUP(pos, city):
     hid=f"lm-{pos}-h"
-    return (f'<aside class="lm-signup lm-{pos}" aria-labelledby="{hid}"><h2 id="{hid}">Free checklist for {city}</h2>'
+    head=(f"Free {city} checklist: get rid of a mattress or couch the easy way" if _AB_CUR[0] in AB_HEADLINE_B else f"Free checklist for {city}")
+    return (f'<aside class="lm-signup lm-{pos}" aria-labelledby="{hid}"><h2 id="{hid}">{head}</h2>'
      '<p>Get a free one-page checklist: how to get rid of a mattress or couch for free or cheap in your city.</p>'
      f'<form class="lm-form" action="https://app.kit.com/forms/{KIT_FORM_ID}/subscriptions" method="post">'
      f'<label for="lm-email-{pos}">Email address</label> <input id="lm-email-{pos}" type="email" name="email_address" required autocomplete="email"> '
@@ -146,7 +151,9 @@ def SIGNUP(pos, city):
      'Signup is handled by Kit (our email service). <a href="privacy.html">Privacy</a> &middot; <a href="#ftc-disclosure">Disclosure</a></p></aside>')
 import json as _gj
 FORM_GATE=set(_gj.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"form_gate.json")))["slugs"]) if os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)),"form_gate.json")) else set()
-def SIG(pos,slug,city): return SIGNUP(pos,city) if slug in FORM_GATE else ""
+def SIG(pos,slug,city):
+    _AB_CUR[0]=slug
+    return SIGNUP(pos,city) if slug in FORM_GATE else ""
 def header1(fn): return f"""<header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>
 <nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="newsletter.html">Newsletter</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>"""
 def page(fn,title,desc,body):
