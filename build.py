@@ -5,6 +5,9 @@ try:
 except ImportError:
     CHECKED_NOTE = {}
 NCITY=len(C)
+import sys as _sys; _sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import v2
+for _d in v2.EXPIRED: print("expired dated item hidden:",_d["slug"],_d["end_date"])
+NO_NL=set()
 BASE = os.environ.get("BASE","https://nater79.github.io/mattress-couch-disposal-guide")
 OUT="site"; os.makedirs(OUT,exist_ok=True)
 SITE="Bulky Item Guide"
@@ -34,6 +37,9 @@ def disc(where="top"):
     n=sum(1 for k in SLOTS if PAID.get(k))
     state="Right now this page has no paid links, ads, or sponsored listings." if n==0 else f"This page has {n} paid placement(s), each labeled Sponsored or Affiliate link right next to it."
     did="ftc-disclosure" if where=="top" else "ftc-disclosure-footer"
+    if where=="top":  # v3: one short line near the top; full disclosure stays in the footer
+        short="No paid links or ads on this page." if n==0 else f"This page has {n} labeled paid placement(s)."
+        return f'<aside class="disc disc-top" id="ftc-disclosure"><strong>Disclosure:</strong> {short} <a href="#ftc-disclosure-footer">Details</a></aside>'
     return (f'<aside class="disc" id="{did}"><strong>Disclosure:</strong> This site may earn money from clearly labeled ads, affiliate links, or sponsored listings. '
             f'Paid placements never change what the city rules say. {state}</aside>')
 
@@ -131,7 +137,7 @@ def article(fn,title,desc,canon):
     return '<script type="application/ld+json">'+_json.dumps(d).replace("</","<\\/")+'</script>'
 NL_CARD=('<aside class="nl-card" aria-labelledby="nl-card-h"><div><p class="nl-kicker">Free email newsletter</p><h2 id="nl-card-h">Declutter, Move &amp; Downsize Smart</h2>'
  '<p>One short email every other week: what to keep, what to give away, and how to get rid of the rest without a fine. About a 3-minute read.</p></div>'
- '<p><a class="btn" href="https://lucca-4.kit.com/a1f664d024" rel="noopener">Subscribe free</a> <a href="newsletter.html">See what is inside</a></p><p class="nl-status">Signup is handled by Kit (our email service). <a href="privacy.html">Privacy</a></p></aside>')
+ '<p><a class="btn" href="https://lucca-4.kit.com/a1f664d024" rel="noopener">Subscribe free</a> <a class="nl-more" href="newsletter.html">See what is inside</a></p><p class="nl-status">Signup is handled by Kit (our email service). <a href="privacy.html">Privacy</a></p></aside>')
 # --- Lead-magnet signup (Counsel-cleared 2026-10-31). Forms appear ONLY on city pages listed in form_gate.json,
 # which update_form_gate.py rewrites from verify_page --staged results (PASS -> form; FAIL -> no form).
 KIT_FORM_ID="10123997"
@@ -156,19 +162,27 @@ def SIG(pos,slug,city):
     return SIGNUP(pos,city) if slug in FORM_GATE else ""
 def header1(fn): return f"""<header class="site-header"><div class="wrap bar"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>
 <nav aria-label="Main"><ul class="nav"><li><a href="index.html#cities"{' aria-current="page"' if fn=="index.html" else ''}>Find your city</a></li><li><a href="junk-removal-springfield-ozark-mo.html">Junk removal: Springfield &amp; Ozark</a></li><li><a href="how-to-videos.html">How-to videos</a></li><li><a href="newsletter.html">Newsletter</a></li><li><a href="about.html"{' aria-current="page"' if fn=="about.html" else ''}>About &amp; how we check</a></li></ul></nav></div></header>"""
+CITYFN={f"{c[0]}.html" for c in C}
+NAVL=[("index.html#cities","Find your city"),("junk-removal-springfield-ozark-mo.html","Junk removal: Springfield &amp; Ozark"),("how-to-videos.html","How-to videos"),("newsletter.html","Newsletter"),("about.html","About &amp; how we check")]
+def header3(fn):
+    li="".join(f'<li><a href="{h}"{' aria-current="page"' if h==fn else ''}>{t}</a></li>' for h,t in NAVL)
+    return ('<header class="site-header hdr3"><div class="wrap bar3"><a class="brand" href="index.html"><picture><source srcset="img/logo-header.webp" type="image/webp"><img class="brand-logo" src="img/logo-header.png" width="98" height="40" alt="Bulky Item Guide"></picture></a>'
+      f'<nav class="nav3-desk" aria-label="Main"><ul>{li}</ul></nav><a class="find3" href="index.html#cities">Find your city</a>'
+      f'<details class="nav3-mob"><summary aria-label="Menu"><span class="burger3" aria-hidden="true"></span><span class="sr-only">Menu</span></summary><nav aria-label="Main (mobile)"><ul>{li}</ul></nav></details></div></header>')
 def page(fn,title,desc,body):
-    body=(herofy2(fn,body) if fn in REDESIGN else herofy(fn,body))+REL.get(fn,"")+(NL_CARD if fn!="newsletter.html" else "")
+    body=(herofy2(fn,body) if fn in REDESIGN else herofy(fn,body))+REL.get(fn,"")+(NL_CARD if fn!="newsletter.html" and fn not in CITYFN else "")
     canon=ROOT if fn=="index.html" else ROOT+fn
     open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC.replace("form-action 'none'","form-action https://app.kit.com") if fn[:-5] in FORM_GATE else HEAD_SEC}
-<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css">{'<link rel="stylesheet" href="redesign.css">' if fn in REDESIGN else ''}<link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="img/favicon-180.png">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
+<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="v2.css">{'<link rel="stylesheet" href="redesign.css">' if fn in REDESIGN else ''}<link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="img/favicon-180.png">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
 <a class="skip" href="#main">Skip to content</a>
-{header2(fn) if fn in REDESIGN else header1(fn)}
-<div class="wrap">{crumbs(fn,title)}{disc2() if fn in REDESIGN else disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}">{body}</main>{SLOT('footer-ad')}</div>
+{header3(fn)}
+<div class="wrap">{crumbs(fn,title)}{disc2() if fn in REDESIGN else disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}{' city3' if fn in CITYFN else ''}">{body}</main>{SLOT('footer-ad')}</div>
 <footer class="site-footer"><div class="wrap"><p class="foot-brand"><img class="foot-logo" src="img/favicon-32.png" width="24" height="24" alt=""> {SITE}</p><p><strong>Not affiliated with any city government. Rules change; check with your city before you act.</strong> Information may be out of date or wrong. We are not responsible for fines or missed pickups. Always confirm with your city.</p><p>Found a mistake? Contact us: {CONTACT}</p>{disc("footer")}<p class="foot-nav"><a href="index.html">{SITE}</a> &middot; <a href="about.html">About &amp; how we check</a> &middot; <a href="privacy.html">Privacy</a> &middot; <a href="newsletter.html">Newsletter</a> &middot; <a href="sitemap.xml">Sitemap</a></p></div></footer></body></html>""")
 if REDESIGN_ON:
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"redesign.css"),f"{OUT}/redesign.css")
     shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","photos"),f"{OUT}/img/photos",dirs_exist_ok=True)
     shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","video2"),f"{OUT}/img/video2",dirs_exist_ok=True)
+shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"v2.css"),f"{OUT}/v2.css"); shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","city"),f"{OUT}/img/city",dirs_exist_ok=True); shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","photos"),f"{OUT}/img/photos",dirs_exist_ok=True)
 open(f"{OUT}/style.css","w").write(CSS+(("\n"+open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"signup-style.css")).read()) if FORM_GATE else ""))
 os.makedirs(f"{OUT}/img",exist_ok=True); open(f"{OUT}/img/skyline.svg","w").write(SKY)
 _I=os.path.join(os.path.dirname(os.path.abspath(__file__)),"img")
@@ -180,7 +194,7 @@ DON="""<section class="step donate"><h2>Step 1: Can someone else use it? Donate 
 <li>Call a local thrift store, church, shelter, or furniture bank. Ask if they take it and if they pick up.</li>
 <li><strong>Call first.</strong> Many charities do not take used mattresses.</li>{extra}</ul></section>"""
 urls=["index.html","about.html"]
-rows=""
+rows=""; ROWS3=[]
 for slug,name,st,pop,agency,src,rules,notes in C:
     CK=CHECKED_BY.get(slug,CHECKED)
     if slug in CHECKED_NOTE:
@@ -195,22 +209,30 @@ for slug,name,st,pop,agency,src,rules,notes in C:
     rl="".join(f"<li>{r}</li>" for r in rules)
     other="".join(f'<p class="check">{n}</p>' for n in notes if "Bye Bye" not in n)
     status="Partly verified" if (not rules or other) else "Verified on official page"
-    body=f"""<h1>How to get rid of a mattress or couch in {name}, {st}</h1>
-<div class="glance"><div><span class="k">Official source</span><a href="{src}" rel="nofollow">{agency}</a></div>{CKG}<div><span class="k">Status</span><span class="pill {'pill-warn' if status!='Verified on official page' else 'pill-ok'}">{status}</span></div></div>
-{cards([("heart","Donate first","Help a neighbor"),("doc","Official rules","Linked source"),("cal","Last checked","Dated every page"),("truck","Hauler options","Ask for a written price")])}
-{DON.format(extra=ex)}
-<section class="step step-city"><h2>Step 2: City pickup and drop-off rules</h2>
-{'<ul>'+rl+'</ul>' if rules else ''}{other}
-<p>Anything not listed here: <strong>check with the city</strong>. We only list rules we could confirm on an official page.</p>
-<p><strong>Official source:</strong> <a href="{src}" rel="nofollow">{agency}</a><br>{CKP}</p>
-</section>{SIG("inline",slug,name)}<section class="step step-other"><h2>Step 3: Other options</h2>
+    warn=" ".join(n for n in notes if "Bye Bye" not in n and "California" not in n)
+    canote="".join(f'<p class="good3"><strong>Buying a new mattress?</strong> {n.split(" You can also")[0]}</p>' for n in notes if "California" in n)
+    other_nc="".join(f'<p class="check">{n}</p>' for n in notes if "Bye Bye" not in n and "California" not in n)
+    meta=f'Source: <a href="{src}" rel="nofollow">{agency}</a> &middot; {"Last checked " if slug not in CHECKED_NOTE else ""}{CKP.replace("<strong>Last checked:</strong> ","")} &middot; <span class="dot3 {"dot-ok" if status=="Verified on official page" else "dot-warn"}"></span>{status}'
+    sig=SIG("rail",slug,name)
+    if not sig: NO_NL.add(fn)
+    _src_card=f'<div class="railcard3"><h2>Official source</h2><p><a href="{src}" rel="nofollow">{agency}</a></p><p class="small3">{CKP}</p><p class="small3">Status: {status}</p></div>'
+    rail=f'<aside class="rail3" aria-label="Page details">{v2.dropcard(slug) or _src_card}{sig or NL_CARD}</aside>'
+    body=f"""{v2.hero(slug,name,st,meta)}<div class="layout3"><div class="main3">{v2.glance(slug,src,agency,rules,warn)}{canote}
+<section class="step step-city"><h2>City pickup and drop-off rules</h2>
+{v2.blocks(slug,rules)}
+<p class="small3 inblk3">Anything not listed here: <strong>check with the city</strong>. We only list rules we could confirm on an official page.</p>
+<p class="small3"><strong>Official source:</strong> <a href="{src}" rel="nofollow">{agency}</a><br>{CKP}</p>
+</section>
+{DON.format(extra=ex).replace("Step 1: Can someone else use it? Donate first","Still in good shape? Donate it")}
+<section class="step step-other"><h2>Hiring a hauler instead</h2>
 <p>If the city cannot help, you can hire a licensed hauler. Ask for a written price first. Never pay someone who might dump it illegally.</p>
-{SLOT('hauler-referral')}{SLOT('featured-local-hauler')}{SLOT('mattress-brand-haulaway')}</section>{SIG("bottom",slug,name)}"""
+{SLOT('hauler-referral')}{SLOT('featured-local-hauler')}{SLOT('mattress-brand-haulaway')}</section></div>{rail}</div>"""
     MOD[fn]=CK
     near=[c for c in C if c[2]==st and c[0]!=slug][:3] or []
     others=near+[c for c in C if c[0]!=slug and c not in near][:max(0,4-len(near))]
     REL[fn]='<nav class="related" aria-label="Related pages"><h2>Other city guides</h2><ul>'+"".join(f'<li><a href="{c[0]}.html">Mattress and couch disposal in {c[1]}, {c[2]}</a></li>' for c in others[:4])+'<li><a href="junk-removal-springfield-ozark-mo.html">Junk removal in Springfield and Ozark, MO</a></li></ul></nav>'
     page(fn,f"Get rid of a mattress or couch in {name} ({CK[:4]} city rules)",f"Free and low-cost ways to get rid of a mattress or couch in {name}: donate first, then official city pickup rules with a source link.",body)
+    ROWS3.append((st,name,fn,status))
     rows+=f'<li><a class="city" href="{fn}"><span class="cname">{name}, {st}</span>{"" if rules and not other else " <span class=\'pill pill-warn\'>(partly verified)</span>"}</a></li>'
 # --- Junk removal page: Springfield / Ozark, MO. Every fact read on the linked page on JCHECK. ---
 JCHECK="2026-10-26"
@@ -256,8 +278,21 @@ REL[JFN]='<nav class="related" aria-label="Related pages"><h2>Related guides</h2
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"local_pages.py")).read())
 page(JFN,f"Junk removal in Springfield and Ozark, MO ({JCHECK[:4]} fees and drop-off sites)","How to get rid of junk, couches, and mattresses in Springfield and Ozark, Missouri: drop-off sites, hours, fees, and pickup options, with official sources.",jbody)
 
+STN={"AZ":"Arizona","CA":"California","CO":"Colorado","DC":"District of Columbia","FL":"Florida","IL":"Illinois","IN":"Indiana","KY":"Kentucky","MA":"Massachusetts","MD":"Maryland","MI":"Michigan","NC":"North Carolina","NM":"New Mexico","NV":"Nevada","NY":"New York","OH":"Ohio","OK":"Oklahoma","OR":"Oregon","PA":"Pennsylvania","TN":"Tennessee","TX":"Texas","WA":"Washington"}
+_g={}
+for st,name,fn,status in ROWS3: _g.setdefault(st,[]).append((name,fn,status))
+_stnav='<nav class="stnav3" aria-label="Jump to a state"><ul>'+"".join(f'<li><a href="#st-{st.lower()}" title="{STN.get(st,st)}">{st}</a></li>' for st in sorted(_g,key=lambda x:STN.get(x,x)))+'</ul></nav>'
+_groups="".join(f'<div class="stgroup3" id="st-{st.lower()}"><h3>{STN.get(st,st)}</h3><ul>'+"".join(f'<li><a href="{fn}"><span class="dot3 {"dot-ok" if status=="Verified on official page" else "dot-warn"}" aria-hidden="true"></span>{n}<span class="sr-only"> ({status})</span></a></li>' for n,fn,status in sorted(v))+'</ul></div>' for st,v in sorted(_g.items(),key=lambda x:STN.get(x[0],x[0])))
+_jump="".join(f'<li><a href="{fn}">{n}</a></li>' for n,fn in [("Fresno","fresno.html"),("Chicago","chicago.html"),("Houston","houston.html"),("Long Beach","long-beach.html"),("Albuquerque","albuquerque.html"),("New York City","new-york.html")])
 page("index.html",f"{SITE}: get rid of a mattress or couch in your city","How to get rid of a mattress or couch in the 25 biggest US cities. Donate first, then official city rules with sources.",
- f"<h1>Get rid of your old mattress or couch, the right way</h1><p class=\"lede\">Every city has different rules. Pick your city. Each page starts with donation ideas, then shows the city's own rules with a link to the official page and the date we checked it.</p><p class='ctas'><a class='btn' href='#cities'>Find my city's rules</a> <a class='btn btn-ghost' href='junk-removal-springfield-ozark-mo.html'>New: Junk removal in Springfield &amp; Ozark, MO</a></p>{cards([('doc','Official rules','Linked on every page'),('cal','Last checked','Date on every page'),('shield','No paid rankings','No reviews or ratings'),('heart','Donate first','Keep it out of the landfill')])}<section id='cities' aria-labelledby='cities-h'><h2 id='cities-h' class='sr-only'>Cities</h2><ul class='city-grid'>{rows}</ul><p class='note'>Cities are picked from the largest in the US by 2023 Census Bureau population estimates. More are added as we check them.</p></section>")
+ f"""<section class="home3-hero"><picture class="hero3-img"><source srcset="img/photos/hero-couch-curb.webp" type="image/webp"><img src="img/photos/hero-couch-curb.jpg" width="1200" height="900" alt="Photo of a worn couch left on a street curb" loading="eager" fetchpriority="high"></picture>
+<div class="home3-text"><h1>Get rid of your old mattress or couch, the right way</h1><p class="lede">Official city rules, with the source and the date we checked.</p>
+<p class="ctas"><a class="btn3" href="#cities">Find my city's rules</a></p><p class="popular3" id="pop3">Popular:</p><ul class="quick3" aria-labelledby="pop3">{_jump}</ul></div></section>
+<p class="credit3">Photo: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Couch_left_on_a_curb.jpg" rel="nofollow">Couch left on a curb</a>&rdquo; by Bluestspruce, dedicated to the public domain under <a href="https://creativecommons.org/publicdomain/zero/1.0/" rel="nofollow">CC0 1.0</a>. Cropped; shown with a teal overlay.</p>
+<a class="feat3" href="junk-removal-springfield-ozark-mo.html"><span class="feat3-k">Local guide</span><strong>Junk removal in Springfield &amp; Ozark, MO</strong><span>Drop-off sites, hours and real fees from city pages</span></a>
+<section id="cities" aria-labelledby="cities-h" class="cities3"><h2 id="cities-h">Find your city</h2><p class="legend3"><span class="dot3 dot-ok" aria-hidden="true"></span> Verified on official page <span class="legsep3"></span><span class="dot3 dot-warn" aria-hidden="true"></span> Partly verified</p>
+{_stnav}<div class="stgrid3">{_groups}</div><p class="note">Cities are picked from the largest in the US by 2023 Census Bureau population estimates. More are added as we check them.</p></section>
+<ul class="trust3"><li><strong>Official rules</strong> Linked on every page</li><li><strong>Dated</strong> Last-checked date on every page</li><li><strong>No paid rankings</strong> No reviews or ratings</li></ul>""")
 page("about.html",f"About {SITE}","How the Bulky Item Guide checks city rules: official sources only, a last-checked date on every page, and clear labels on any paid link.",f"""<h1>About this guide and how we check it</h1>
 <p>We want to make it easy to do the right thing with old furniture: give it away if you can, and follow city rules if you can't. That helps neighbors and cuts down on illegal dumping.</p>
 <h2>How we check</h2><ul><li>Every rule comes from an official city (or city-contracted) web page. We link to it.</li>
