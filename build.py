@@ -193,6 +193,8 @@ DON="""<section class="step donate"><h2>Step 1: Can someone else use it? Donate 
 <ul><li>Offer it free to neighbors (Buy Nothing groups, Nextdoor, Facebook Marketplace, Craigslist "free").</li>
 <li>Call a local thrift store, church, shelter, or furniture bank. Ask if they take it and if they pick up.</li>
 <li><strong>Call first.</strong> Many charities do not take used mattresses.</li>{extra}</ul></section>"""
+R2_SLUGS={"sacramento"}  # Claude round-1 fixes, scoped to Sacramento only
+NEAR_SAC=["san-francisco","san-jose","fresno","los-angeles","long-beach"]
 urls=["index.html","about.html"]
 rows=""; ROWS3=[]
 for slug,name,st,pop,agency,src,rules,notes in C:
@@ -210,9 +212,12 @@ for slug,name,st,pop,agency,src,rules,notes in C:
     other="".join(f'<p class="check">{n}</p>' for n in notes if "Bye Bye" not in n)
     status="Partly verified" if (not rules or other) else "Verified on official page"
     warn=" ".join(n for n in notes if "Bye Bye" not in n and "California" not in n)
-    canote="".join(f'<p class="good3"><strong>Buying a new mattress?</strong> {n.split(" You can also")[0]}</p>' for n in notes if "California" in n)
+    R2=slug in R2_SLUGS
+    if R2: ex="".join(f"<li>{n}</li>" for n in notes if "Bye Bye" in n and "California" not in n)
+    canote="".join(f'<p class="good3"><strong>Buying a new mattress?</strong> {n.split(" You can also")[0]}{" Or drop it off free at a <a href=\"https://byebyemattress.com/california/\">Bye Bye Mattress site</a>." if R2 else ""}</p>' for n in notes if "California" in n)
     other_nc="".join(f'<p class="check">{n}</p>' for n in notes if "Bye Bye" not in n and "California" not in n)
     meta=f'Source: <a href="{src}" rel="nofollow">{agency}</a> &middot; {"Last checked " if slug not in CHECKED_NOTE else ""}{CKP.replace("<strong>Last checked:</strong> ","")} &middot; <span class="dot3 {"dot-ok" if status=="Verified on official page" else "dot-warn"}"></span>{status}'
+    if R2: meta=meta.rsplit(' &middot; ',1)[0]+f' &middot; <span class="pill3 {"pill3-ok" if status=="Verified on official page" else "pill3-warn"}"><span aria-hidden="true">&#9679;</span> {status}</span>'
     sig=SIG("rail",slug,name)
     if not sig: NO_NL.add(fn)
     _src_card=f'<div class="railcard3"><h2>Official source</h2><p><a href="{src}" rel="nofollow">{agency}</a></p><p class="small3">{CKP}</p><p class="small3">Status: {status}</p></div>'
@@ -227,10 +232,14 @@ for slug,name,st,pop,agency,src,rules,notes in C:
 <section class="step step-other"><h2>Hiring a hauler instead</h2>
 <p>If the city cannot help, you can hire a licensed hauler. Ask for a written price first. Never pay someone who might dump it illegally.</p>
 {SLOT('hauler-referral')}{SLOT('featured-local-hauler')}{SLOT('mattress-brand-haulaway')}</section></div>{rail}</div>"""
+    if R2: body=body.replace(DON.format(extra=ex).replace("Step 1: Can someone else use it? Donate first","Still in good shape? Donate it")+"\n"+'<section class="step step-other"><h2>Hiring a hauler instead</h2>\n<p>If the city cannot help', DON.format(extra=ex).replace('<section class="step donate"><h2>Step 1: Can someone else use it? Donate first</h2>','<section class="step step-other donate"><h2>Other options</h2><h3>Donate it</h3>').replace("</ul></section>","</ul>")+'\n<h3>Hire a hauler</h3>\n<p>If the city cannot help')
     MOD[fn]=CK
+    if R2:
+        _have={c[0] for c in C}; MISSING_NEAR=[x for x in NEAR_SAC if x not in _have]
+        REL[fn]='<nav class="related" aria-label="Related pages"><h2>Nearby city guides</h2><ul>'+''.join(f'<li><a href="{c[0]}.html">Mattress and couch disposal in {c[1]}, {c[2]}</a></li>' for x in NEAR_SAC for c in C if c[0]==x)+'</ul></nav>'
     near=[c for c in C if c[2]==st and c[0]!=slug][:3] or []
     others=near+[c for c in C if c[0]!=slug and c not in near][:max(0,4-len(near))]
-    REL[fn]='<nav class="related" aria-label="Related pages"><h2>Other city guides</h2><ul>'+"".join(f'<li><a href="{c[0]}.html">Mattress and couch disposal in {c[1]}, {c[2]}</a></li>' for c in others[:4])+'<li><a href="junk-removal-springfield-ozark-mo.html">Junk removal in Springfield and Ozark, MO</a></li></ul></nav>'
+    if not R2: REL[fn]='<nav class="related" aria-label="Related pages"><h2>Other city guides</h2><ul>'+"".join(f'<li><a href="{c[0]}.html">Mattress and couch disposal in {c[1]}, {c[2]}</a></li>' for c in others[:4])+'<li><a href="junk-removal-springfield-ozark-mo.html">Junk removal in Springfield and Ozark, MO</a></li></ul></nav>'
     page(fn,f"Get rid of a mattress or couch in {name} ({CK[:4]} city rules)",f"Free and low-cost ways to get rid of a mattress or couch in {name}: donate first, then official city pickup rules with a source link.",body)
     ROWS3.append((st,name,fn,status))
     rows+=f'<li><a class="city" href="{fn}"><span class="cname">{name}, {st}</span>{"" if rules and not other else " <span class=\'pill pill-warn\'>(partly verified)</span>"}</a></li>'

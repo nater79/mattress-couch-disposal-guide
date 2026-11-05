@@ -43,5 +43,14 @@
   "license_url": "https://creativecommons.org/licenses/by/4.0/",
   "alt": "Photo of the downtown Albuquerque skyline",
   "date": "2026-03-23 10:33:37"
+ },
+ "sacramento": {
+  "name": "Sacramento, California skyline in 2023",
+  "page": "https://commons.wikimedia.org/wiki/File:Sacramento,_California_skyline_in_2023.jpg",
+  "artist": "Quintin Soloviev",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "alt": "Photo of the Sacramento skyline and the gold Tower Bridge over the Sacramento River",
+  "date": "2023-06-16 16:26:40"
  }
 }

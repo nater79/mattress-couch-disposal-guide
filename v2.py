@@ -19,11 +19,12 @@ def hero(slug,name,st,meta):
             f'<h1>How to get rid of a mattress or couch in {name}, {st}</h1><p class="meta3">{meta}</p></div></section>{cr}')
 # Date-bound items (v3): each has an end_date (inclusive). The build drops it once TODAY > end_date.
 # A rebuild is needed for expiry to take effect (weekly rebuild schedule: owner to set up).
-DATED=[dict(slug="fresno",end_date="2026-11-15",html="Next free dump days: Nov 14&ndash;15")]
+DATED=[dict(slug="fresno",end_date="2026-11-15",html="Next free dump days: Nov 14&ndash;15"),dict(slug="sacramento",end_date="2027-01-31",html="Free junk pickups pause for leaf season (Nov&ndash;Jan). Paid pickups may be available.")]
 def dated(slug): return [d for d in DATED if d["slug"]==slug and TODAY<=d["end_date"]]
 EXPIRED=[d for d in DATED if TODAY>d["end_date"]]
 # Drop-off cards for the sidebar (v3). Addresses restate cities.py text.
 DROP={"fresno":("Free Dump Event drop-off","CARTS, 3457 S. Cedar Ave., Fresno, CA","Open on Free Dump Event days only.","3457 S. Cedar Ave, Fresno, CA"),
+ "sacramento":("Self-haul with a dump coupon","Sacramento Recycling and Transfer Station, 8491 Fruitridge Road","Ask 311 for a free dump coupon first, and check that your item is taken.","8491 Fruitridge Road, Sacramento, CA 95826"),
  "long-beach":("24/7 mattress drop-off","970 W. Chester Place, Long Beach, CA","Free for residents.","970 W. Chester Place, Long Beach, CA")}
 def dropcard(slug):
     d=DROP.get(slug)
@@ -36,6 +37,8 @@ G={
   tel=[("311","Call 311"),("559-621-2489","From outside Fresno")]),
 "long-beach":dict(rows=[("Cost","Free: 12 Special Collections per year for homes with city trash service"),("How to book","Online request form or the Call Center. Wait for them to confirm your date."),("Set-out time","By 6 a.m. on your confirmed day"),("Limits","Up to 8 large items or 25 bags per pickup; items up to 72 by 48 inches"),("Drop-off","Free 24/7 mattress drop-off at 970 W. Chester Place (residents)")],
   tel=[("562-570-2876","Call Center")]),
+"sacramento":dict(rows=[("Cost","Free: 2 Household Junk Pickups per year for homes with city trash service"),("When","Free appointments February through October. Nov&ndash;Jan: paid pickups may be available (minimum $39.48)."),("How to book","Sac311 online, the Sac311 app, or call 311"),("Set-out time","No earlier than 24 hours before, and by 6:00 a.m. on the day"),("Limits","One pile up to 4 by 4 by 9 feet; appliances and e-waste need a separate appointment")],
+  tel=[("311","Call 311"),("916-264-5011","From outside city limits"),("916-808-5454","Paid pickups (Utility Billing)")]),
 "chicago":dict(rows=[("Who is served","City crews serve homes and buildings with 4 units or fewer. 5+ units: hire a private hauler."),("How to book","Arrange a bulk pickup with your ward superintendent through 311"),("Fridges &amp; freezers","Take the doors or lids off first")],
   tel=[("311","Call 311"),("312-744-5000","From outside Chicago")]),
 "houston":dict(rows=[("How often","Every other month, in even-numbered months"),("Who is served","Occupied homes with city curbside service (not buildings over 8 units)"),("Set-out time","6 p.m. the Friday before to 7 a.m. on collection day, behind the curb"),("Limits","8 cubic yards per set-out (about a minivan)"),("Drop-off","City Residential Drop-Off locations between pickups (bring proof of address)")],tel=[]),
@@ -45,6 +48,7 @@ G={
 H={
 "fresno":["One-Time Bulky Item Pickup","How to book","Setting it out","Not taken, and second pickups","Operation Clean Up","Apartments (4+ units)","Free Dump Events","Questions"],
 "long-beach":["Special Collections","How to book","What fits in one pickup","Mattresses and set-out time","Appliances, TVs and tires","24/7 mattress drop-off","Illegal dumping","Questions"],
+"sacramento":["Household Junk Pickup","How to book","Setting it out","Pile size and what is not taken","Canceling","Paid pickups and self-haul","Apartments (5+ units)","Illegal dumping","Questions"],
 "chicago":["Who the city serves","Book a bulk pickup","Refrigerators and freezers"],
 "houston":["Pickup schedule","What is accepted","Limits","Set-out time","Between pickup months"],
 "albuquerque":["Free curb pickup","How to book","Setting it out","Drop-off for a small fee","Convenience Center locations","Mattress limit","Questions"],
