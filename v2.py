@@ -19,7 +19,7 @@ def hero(slug,name,st,meta):
             f'<h1>How to get rid of a mattress or couch in {name}, {st}</h1><p class="meta3">{meta}</p></div></section>{cr}')
 # Date-bound items (v3): each has an end_date (inclusive). The build drops it once TODAY > end_date.
 # A rebuild is needed for expiry to take effect (weekly rebuild schedule: owner to set up).
-DATED=[dict(slug="fresno",end_date="2026-11-15",html="Next free dump days: Nov 14&ndash;15"),dict(slug="sacramento",end_date="2027-01-31",html="Free junk pickups pause for leaf season (Nov&ndash;Jan). Paid pickups may be available.")]
+DATED=[dict(slug="fresno",end_date="2026-11-15",html="Next free dump days: Nov 14&ndash;15"),dict(slug="sacramento",end_date="2027-01-31",html="Free junk pickups pause for leaf season (Nov&ndash;Jan). Paid pickups may be available."),dict(slug="tulsa",end_date="2027-01-31",html="New fee: $20 as of Oct 1, 2026.")]
 def dated(slug): return [d for d in DATED if d["slug"]==slug and TODAY<=d["end_date"]]
 EXPIRED=[d for d in DATED if TODAY>d["end_date"]]
 # Drop-off cards for the sidebar (v3). Addresses restate cities.py text.
@@ -33,6 +33,8 @@ def dropcard(slug):
     return f'<div class="railcard3"><h2>{d[0]}</h2><p><strong>{d[1]}</strong></p><p class="small3">{d[2]}</p><p><a class="btn3 btn3-ghost btn3-full" href="https://www.google.com/maps/dir/?api=1&amp;destination={quote(d[3])}" rel="nofollow noopener">Directions</a></p></div>'
 # Hand-written at-a-glance summaries. Every value restates a rule already shown below on the page (from cities.py).
 G={
+"tulsa":{"rows":[["Cost","$20 per 8 cubic yards (fee as of Oct 1, 2026); each extra 8 cubic yards is another $20"],["When","On your regular refuse day; book at least 3 days ahead"],["How to book","City Bulky Waste app, call 311, or email Tulsa311@cityoftulsa.org"],["Set-out time","By 5:00 a.m. on pickup day"],["Limits","Mattresses and sofas accepted; separate electronics, appliances, and tires"]],"tel":[["311","Call 311"],["Tulsa311@cityoftulsa.org","Email to schedule"]]},
+
 "fresno":dict(rows=[("Cost","Free, once a year, for City of Fresno trash customers"),("How to book","Call 311 or use the FresGO app. The city calls you back within 7 business days."),("Set-out time","No more than 36 hours before your date, and by 6:00 a.m. on the day"),("Limits","Single bulky items (couch, mattress, box spring). Larger loads: Operation Clean Up, up to 10 cubic yards"),("Drop-off","Free Dump Events at CARTS, 3457 S. Cedar Ave.")],
   tel=[("311","Call 311"),("559-621-2489","From outside Fresno")]),
 "long-beach":dict(rows=[("Cost","Free: 12 Special Collections per year for homes with city trash service"),("How to book","Online request form or the Call Center. Wait for them to confirm your date."),("Set-out time","By 6 a.m. on your confirmed day"),("Limits","Up to 8 large items or 25 bags per pickup; items up to 72 by 48 inches"),("Drop-off","Free 24/7 mattress drop-off at 970 W. Chester Place (residents)")],
@@ -46,6 +48,8 @@ G={
   tel=[("311","Call 311"),("505-768-2000","From outside Albuquerque")]),
 }
 H={
+"tulsa":["Bulky Waste Pick Up","Fee","How to book","Setting it out","Also accepted","Not accepted","Canceling","Questions"],
+
 "fresno":["One-Time Bulky Item Pickup","How to book","Setting it out","Not taken, and second pickups","Operation Clean Up","Apartments (4+ units)","Free Dump Events","Questions"],
 "long-beach":["Special Collections","How to book","What fits in one pickup","Mattresses and set-out time","Appliances, TVs and tires","24/7 mattress drop-off","Illegal dumping","Questions"],
 "sacramento":["Household Junk Pickup","How to book","Setting it out","Pile size and what is not taken","Canceling","Paid pickups and self-haul","Apartments (5+ units)","Illegal dumping","Questions"],

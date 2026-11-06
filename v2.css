@@ -149,4 +149,5 @@ main p.good3,main p.warn3,main p.check,main p.chip3{max-width:none}
 .home3-text{min-width:0;width:100%;box-sizing:border-box}.quick3{max-width:100%}
 .pill3{display:inline-block;white-space:nowrap;padding:1px 9px;border-radius:999px;font-weight:600;font-size:13px;line-height:1.5}
 .pill3-ok{background:#e3f5e8;color:#11632f}.pill3-warn{background:#fff3d6;color:#7a4b00}
-.step-other h3{margin:14px 0 6px;font-size:17px}
+.step-other h3{margin:14px 0 6px;font-size:17px;border-left:3px solid var(--t);padding-left:12px}
+@media (max-width:979px){.r2-src-mobile-hide{display:none}}

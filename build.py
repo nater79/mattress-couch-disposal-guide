@@ -193,8 +193,9 @@ DON="""<section class="step donate"><h2>Step 1: Can someone else use it? Donate 
 <ul><li>Offer it free to neighbors (Buy Nothing groups, Nextdoor, Facebook Marketplace, Craigslist "free").</li>
 <li>Call a local thrift store, church, shelter, or furniture bank. Ask if they take it and if they pick up.</li>
 <li><strong>Call first.</strong> Many charities do not take used mattresses.</li>{extra}</ul></section>"""
-R2_SLUGS={"sacramento"}  # Claude round-1 fixes, scoped to Sacramento only
-NEAR_SAC=["san-francisco","san-jose","fresno","los-angeles","long-beach"]
+R2_SLUGS={"sacramento","tulsa"}  # keep Sacramento R2 + add Tulsa (Counsel CLEAR 2026-11-05)
+NEAR={"sacramento":["san-francisco","san-jose","fresno","los-angeles","long-beach"],
+      "tulsa":["oklahoma-city","dallas","fort-worth","houston","san-antonio"]}
 urls=["index.html","about.html"]
 rows=""; ROWS3=[]
 for slug,name,st,pop,agency,src,rules,notes in C:
@@ -220,7 +221,8 @@ for slug,name,st,pop,agency,src,rules,notes in C:
     if R2: meta=meta.rsplit(' &middot; ',1)[0]+f' &middot; <span class="pill3 {"pill3-ok" if status=="Verified on official page" else "pill3-warn"}"><span aria-hidden="true">&#9679;</span> {status}</span>'
     sig=SIG("rail",slug,name)
     if not sig: NO_NL.add(fn)
-    _src_card=f'<div class="railcard3"><h2>Official source</h2><p><a href="{src}" rel="nofollow">{agency}</a></p><p class="small3">{CKP}</p><p class="small3">Status: {status}</p></div>'
+    _src_cls="railcard3 r2-src-mobile-hide" if R2 else "railcard3"
+    _src_card=f'<div class="{_src_cls}"><h2>Official source</h2><p><a href="{src}" rel="nofollow">{agency}</a></p><p class="small3">{CKP}</p><p class="small3">Status: {status}</p></div>'
     rail=f'<aside class="rail3" aria-label="Page details">{v2.dropcard(slug) or _src_card}{sig or NL_CARD}</aside>'
     body=f"""{v2.hero(slug,name,st,meta)}<div class="layout3"><div class="main3">{v2.glance(slug,src,agency,rules,warn)}{canote}
 <section class="step step-city"><h2>City pickup and drop-off rules</h2>
@@ -235,8 +237,9 @@ for slug,name,st,pop,agency,src,rules,notes in C:
     if R2: body=body.replace(DON.format(extra=ex).replace("Step 1: Can someone else use it? Donate first","Still in good shape? Donate it")+"\n"+'<section class="step step-other"><h2>Hiring a hauler instead</h2>\n<p>If the city cannot help', DON.format(extra=ex).replace('<section class="step donate"><h2>Step 1: Can someone else use it? Donate first</h2>','<section class="step step-other donate"><h2>Other options</h2><h3>Donate it</h3>').replace("</ul></section>","</ul>")+'\n<h3>Hire a hauler</h3>\n<p>If the city cannot help')
     MOD[fn]=CK
     if R2:
-        _have={c[0] for c in C}; MISSING_NEAR=[x for x in NEAR_SAC if x not in _have]
-        REL[fn]='<nav class="related" aria-label="Related pages"><h2>Nearby city guides</h2><ul>'+''.join(f'<li><a href="{c[0]}.html">Mattress and couch disposal in {c[1]}, {c[2]}</a></li>' for x in NEAR_SAC for c in C if c[0]==x)+'</ul></nav>'
+        _near=NEAR.get(slug,[]); _have={c[0] for c in C}; MISSING_NEAR=[x for x in _near if x not in _have]
+        if MISSING_NEAR: print("MISSING nearby for",slug,MISSING_NEAR)
+        REL[fn]='<nav class="related" aria-label="Related pages"><h2>Nearby city guides</h2><ul>'+''.join(f'<li><a href="{c[0]}.html">Mattress and couch disposal in {c[1]}, {c[2]}</a></li>' for x in _near for c in C if c[0]==x)+'</ul></nav>'
     near=[c for c in C if c[2]==st and c[0]!=slug][:3] or []
     others=near+[c for c in C if c[0]!=slug and c not in near][:max(0,4-len(near))]
     if not R2: REL[fn]='<nav class="related" aria-label="Related pages"><h2>Other city guides</h2><ul>'+"".join(f'<li><a href="{c[0]}.html">Mattress and couch disposal in {c[1]}, {c[2]}</a></li>' for c in others[:4])+'<li><a href="junk-removal-springfield-ozark-mo.html">Junk removal in Springfield and Ozark, MO</a></li></ul></nav>'
