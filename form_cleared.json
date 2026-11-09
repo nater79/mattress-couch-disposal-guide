@@ -1,5 +1,5 @@
 {
- "note": "Counsel-cleared pages allowed to carry the Kit form (commit bcd652b). Adding a slug requires Counsel clearance; the nightly gate may only REMOVE, never add.",
+ "note": "Counsel-cleared pages allowed to carry the Kit form. index added 2026-11-09 (homepage winter opt-in, Counsel clear after DOI+incentive conditions).",
  "cleared": [
   "albuquerque",
   "austin",
@@ -14,6 +14,7 @@
   "el-paso",
   "fort-worth",
   "houston",
+  "index",
   "indianapolis",
   "jacksonville",
   "las-vegas",
