@@ -138,6 +138,8 @@ def article(fn,title,desc,canon):
 NL_CARD=('<aside class="nl-card" aria-labelledby="nl-card-h"><div><p class="nl-kicker">Free email newsletter</p><h2 id="nl-card-h">Declutter, Move &amp; Downsize Smart</h2>'
  '<p>One short email every other week: what to keep, what to give away, and how to get rid of the rest without a fine. About a 3-minute read.</p></div>'
  '<p><a class="btn" href="https://lucca-4.kit.com/a1f664d024" rel="noopener">Subscribe free</a> <a class="nl-more" href="newsletter.html">See what is inside</a></p><p class="nl-status">Signup is handled by Kit (our email service). <a href="privacy.html">Privacy</a></p></aside>')
+HOME_OPTIN=('<aside class="lm-signup lm-home" aria-labelledby="lm-home-h"><p class="lm-edition">Winter 2026&ndash;27 edition</p><p class="nl-kicker">Free checklist</p><h2 id="lm-home-h">Winter move-out &amp; bulky item checklist</h2><p>Get a free one-page checklist: plan your move-out, give usable items away first, and dispose of mattresses and couches without a fine.</p><form class="lm-form lm-form-r1" action="https://app.kit.com/forms/10123997/subscriptions" method="post"><label class="lm-label" for="lm-email-home">Email address</label><input id="lm-email-home" type="email" name="email_address" required autocomplete="email" placeholder="you@example.com"> <button class="btn lm-btn" type="submit">Send me the checklist</button></form><p class="lm-fine">We&#39;ll email you the checklist and occasional tips. Unsubscribe anytime. We never sell your email. Signup is handled by Kit (our email service). <a href="privacy.html">Privacy</a> &middot; <a href="#ftc-disclosure">Disclosure</a></p><p class="nl-status"><a class="nl-more" href="newsletter.html">Or see the newsletter</a></p></aside>')
+
 # --- Lead-magnet signup (Counsel-cleared 2026-10-31). Forms appear ONLY on city pages listed in form_gate.json,
 # which update_form_gate.py rewrites from verify_page --staged results (PASS -> form; FAIL -> no form).
 KIT_FORM_ID="10123997"
@@ -170,10 +172,10 @@ def header3(fn):
       f'<nav class="nav3-desk" aria-label="Main"><ul>{li}</ul></nav><a class="find3" href="index.html#cities">Find your city</a>'
       f'<details class="nav3-mob"><summary aria-label="Menu"><span class="burger3" aria-hidden="true"></span><span class="sr-only">Menu</span></summary><nav aria-label="Main (mobile)"><ul>{li}</ul></nav></details></div></header>')
 def page(fn,title,desc,body):
-    body=(herofy2(fn,body) if fn in REDESIGN else herofy(fn,body))+REL.get(fn,"")+(NL_CARD if fn!="newsletter.html" and fn not in CITYFN else "")
+    body=(herofy2(fn,body) if fn in REDESIGN else herofy(fn,body))+REL.get(fn,"")+(HOME_OPTIN if fn=="index.html" else NL_CARD if fn!="newsletter.html" and fn not in CITYFN else "")
     canon=ROOT if fn=="index.html" else ROOT+fn
-    open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC.replace("form-action 'none'","form-action https://app.kit.com") if fn[:-5] in FORM_GATE else HEAD_SEC}
-<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="v2.css">{'<link rel="stylesheet" href="redesign.css">' if fn in REDESIGN else ''}<link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="img/favicon-180.png">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
+    open(f"{OUT}/{fn}","w").write(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">{HEAD_SEC.replace("form-action 'none'","form-action https://app.kit.com") if (fn[:-5] in FORM_GATE or fn=="index.html") else HEAD_SEC}
+<title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{canon}"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="v2.css">{'<link rel="stylesheet" href="home-r1.css">' if fn=="index.html" else ''}{'<link rel="stylesheet" href="redesign.css">' if fn in REDESIGN else ''}<link rel="icon" href="favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="img/favicon-180.png">{GSV if fn=="index.html" else ""}{og(fn,title,desc,canon)}{jsonld(fn,title)}{article(fn,title,desc,canon)}</head><body>
 <a class="skip" href="#main">Skip to content</a>
 {header3(fn)}
 <div class="wrap">{crumbs(fn,title)}{disc2() if fn in REDESIGN else disc()}{SLOT('top-banner')}<main id="main" class="{'home' if fn=='index.html' else 'content'}{' city3' if fn in CITYFN else ''}">{body}</main>{SLOT('footer-ad')}</div>
@@ -182,7 +184,7 @@ if REDESIGN_ON:
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"redesign.css"),f"{OUT}/redesign.css")
     shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","photos"),f"{OUT}/img/photos",dirs_exist_ok=True)
     shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","video2"),f"{OUT}/img/video2",dirs_exist_ok=True)
-shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"v2.css"),f"{OUT}/v2.css"); shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","city"),f"{OUT}/img/city",dirs_exist_ok=True); shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","photos"),f"{OUT}/img/photos",dirs_exist_ok=True)
+shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"v2.css"),f"{OUT}/v2.css"); shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)),"home-r1.css"),f"{OUT}/home-r1.css"); shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","city"),f"{OUT}/img/city",dirs_exist_ok=True); shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)),"img","photos"),f"{OUT}/img/photos",dirs_exist_ok=True)
 open(f"{OUT}/style.css","w").write(CSS+(("\n"+open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"signup-style.css")).read()) if FORM_GATE else ""))
 os.makedirs(f"{OUT}/img",exist_ok=True); open(f"{OUT}/img/skyline.svg","w").write(SKY)
 _I=os.path.join(os.path.dirname(os.path.abspath(__file__)),"img")
@@ -304,7 +306,7 @@ page("index.html",f"{SITE}: get rid of a mattress or couch in your city","How to
 <a class="feat3" href="junk-removal-springfield-ozark-mo.html"><span class="feat3-k">Local guide</span><strong>Junk removal in Springfield &amp; Ozark, MO</strong><span>Drop-off sites, hours and real fees from city pages</span></a>
 <section id="cities" aria-labelledby="cities-h" class="cities3"><h2 id="cities-h">Find your city</h2><p class="legend3"><span class="dot3 dot-ok" aria-hidden="true"></span> Verified on official page <span class="legsep3"></span><span class="dot3 dot-warn" aria-hidden="true"></span> Partly verified</p>
 {_stnav}<div class="stgrid3">{_groups}</div><p class="note">Cities are picked from the largest in the US by 2023 Census Bureau population estimates. More are added as we check them.</p></section>
-<ul class="trust3"><li><strong>Official rules</strong> Linked on every page</li><li><strong>Dated</strong> Last-checked date on every page</li><li><strong>No paid rankings</strong> No reviews or ratings</li></ul>""")
+<ul class="trust3 trust3-r1"><li><strong>Official rules</strong> <span class="trust3-desc">Linked on every page</span></li><li><strong>Dated</strong> <span class="trust3-desc">Last-checked date on every page</span></li><li><strong>No paid rankings</strong> <span class="trust3-desc">No reviews or ratings</span></li></ul>""")
 page("about.html",f"About {SITE}","How the Bulky Item Guide checks city rules: official sources only, a last-checked date on every page, and clear labels on any paid link.",f"""<h1>About this guide and how we check it</h1>
 <p>We want to make it easy to do the right thing with old furniture: give it away if you can, and follow city rules if you can't. That helps neighbors and cuts down on illegal dumping.</p>
 <h2>How we check</h2><ul><li>Every rule comes from an official city (or city-contracted) web page. We link to it.</li>
@@ -346,7 +348,7 @@ pbody="""<h1>Privacy</h1><p>Last updated: October 31, 2026.</p>
 <li><strong>We never sell, share, rent or swap your email.</strong> No one gets it except Kit, which sends the emails for us.</li>
 <li><strong>Sponsors:</strong> any paid spot or affiliate link in an email will be labeled Sponsored or Affiliate link.</li></ul>
 <h2>Children</h2><p>This newsletter is not meant for children under 13.</p>
-<h2>Contact</h2><p>To see or delete your data, email us at the address below.</p><p>Email: <a href="mailto:navexiateam@navexia.net">navexiateam@navexia.net</a> (for replies to our emails only).<br>Mailing address: 117 S Lexington St, Ste 100, Harrisonville, MO 64701-2444.</p>"""
+<h2>Contact</h2><p>To see or delete your data, email us at the address below.</p><p>Email: <a href="mailto:navexiateam@navexia.net">navexiateam@navexia.net</a> (for replies to our emails only).<br>Mailing address: 117 S Lexington St, Harrisonville, MO 64701.</p>"""
 page(PFN,"Privacy | "+SITE,"How Bulky Item Guide handles your email for the free checklist and newsletter: run by Kit, double opt-in, one-click unsubscribe, never sold, shared, rented or swapped.",pbody)
 open(f"{OUT}/sitemap.xml","w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{ROOT if u=='index.html' else BASE+'/'+u}</loc><lastmod>{MOD.get(u,CHECKED)}</lastmod></url>" for u in urls)+"</urlset>\n")
 open(f"{OUT}/robots.txt","w").write(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n")
@@ -360,4 +362,4 @@ for _f in _g.glob(f"{OUT}/*.html"):
     _h=open(_f).read()
     assert "Content-Security-Policy" in _h and "script-src 'none'" in _h and 'name="referrer"' in _h and 'rel="canonical"' in _h and "application/ld+json" in _h, f"missing head tags: {_f}"
     assert _h.count("<title>")==1 and 'property="og:title"' in _h, f"missing title/og: {_f}"
-    assert not _re.search(r'style=|<style|<form|<iframe|<script(?! type="application/ld\+json")',_re.sub(r'<form class="lm-form" action="https://app\.kit\.com/forms/[A-Za-z0-9_]+/subscriptions" method="post">','',_h)), f"inline style/script/form: {_f}"
+    assert not _re.search(r'style=|<style|<form|<iframe|<script(?! type="application/ld\+json")',_re.sub(r'<form class="lm-form(?: [^"]*)?" action="https://app\.kit\.com/forms/[A-Za-z0-9_]+/subscriptions" method="post">','',_h)), f"inline style/script/form: {_f}"
