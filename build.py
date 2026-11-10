@@ -195,9 +195,10 @@ DON="""<section class="step donate"><h2>Step 1: Can someone else use it? Donate 
 <ul><li>Offer it free to neighbors (Buy Nothing groups, Nextdoor, Facebook Marketplace, Craigslist "free").</li>
 <li>Call a local thrift store, church, shelter, or furniture bank. Ask if they take it and if they pick up.</li>
 <li><strong>Call first.</strong> Many charities do not take used mattresses.</li>{extra}</ul></section>"""
-R2_SLUGS={"sacramento","tulsa"}  # keep Sacramento R2 + add Tulsa (Counsel CLEAR 2026-11-05)
+R2_SLUGS={"sacramento","tulsa","tampa"}  # keep Sacramento R2 + add Tulsa (Counsel CLEAR 2026-11-05)
 NEAR={"sacramento":["san-francisco","san-jose","fresno","los-angeles","long-beach"],
-      "tulsa":["oklahoma-city","dallas","fort-worth","houston","san-antonio"]}
+      "tulsa":["oklahoma-city","dallas","fort-worth","houston","san-antonio"],
+      "tampa":["jacksonville","charlotte","nashville","louisville","houston"]}
 urls=["index.html","about.html"]
 rows=""; ROWS3=[]
 for slug,name,st,pop,agency,src,rules,notes in C:
@@ -220,6 +221,7 @@ for slug,name,st,pop,agency,src,rules,notes in C:
     canote="".join(f'<p class="good3"><strong>Buying a new mattress?</strong> {n.split(" You can also")[0]}{" Or drop it off free at a <a href=\"https://byebyemattress.com/california/\">Bye Bye Mattress site</a>." if R2 else ""}</p>' for n in notes if "California" in n)
     other_nc="".join(f'<p class="check">{n}</p>' for n in notes if "Bye Bye" not in n and "California" not in n)
     meta=f'Source: <a href="{src}" rel="nofollow">{agency}</a> &middot; {"Last checked " if slug not in CHECKED_NOTE else ""}{CKP.replace("<strong>Last checked:</strong> ","")} &middot; <span class="dot3 {"dot-ok" if status=="Verified on official page" else "dot-warn"}"></span>{status}'
+    if slug=="tampa": meta=meta.replace(f"Last checked {CK}",f'<span class="nw3">Last checked {CK}</span>')
     if R2: meta=meta.rsplit(' &middot; ',1)[0]+f' &middot; <span class="pill3 {"pill3-ok" if status=="Verified on official page" else "pill3-warn"}"><span aria-hidden="true">&#9679;</span> {status}</span>'
     sig=SIG("rail",slug,name)
     if not sig: NO_NL.add(fn)

@@ -25,14 +25,21 @@ EXPIRED=[d for d in DATED if TODAY>d["end_date"]]
 # Drop-off cards for the sidebar (v3). Addresses restate cities.py text.
 DROP={"fresno":("Free Dump Event drop-off","CARTS, 3457 S. Cedar Ave., Fresno, CA","Open on Free Dump Event days only.","3457 S. Cedar Ave, Fresno, CA"),
  "sacramento":("Self-haul with a dump coupon","Sacramento Recycling and Transfer Station, 8491 Fruitridge Road","Ask 311 for a free dump coupon first, and check that your item is taken.","8491 Fruitridge Road, Sacramento, CA 95826"),
+ "tampa":("Free drop-off for residents","McKay Bay Scale House, 114 South 34th Street, Tampa, FL","Bring ID and a City of Tampa utility bill in the same name.","114 South 34th Street, Tampa, FL 33605"),
  "long-beach":("24/7 mattress drop-off","970 W. Chester Place, Long Beach, CA","Free for residents.","970 W. Chester Place, Long Beach, CA")}
+# Per-city primary button overrides (label, official URL). Tampa: S.W.E.E.P. address lookup section on tampa.gov (checked 200, 2026-11-09).
+BTN={"tampa":("Find your S.W.E.E.P. date","https://www.tampa.gov/solid-waste/programs/sweep#section-124381")}
+# Drop-off cards hidden on mobile (same class/breakpoint as Tulsa's source card).
+DROP_MHIDE={"tampa"}
 def dropcard(slug):
     d=DROP.get(slug)
     if not d: return ""
     from urllib.parse import quote
-    return f'<div class="railcard3"><h2>{d[0]}</h2><p><strong>{d[1]}</strong></p><p class="small3">{d[2]}</p><p><a class="btn3 btn3-ghost btn3-full" href="https://www.google.com/maps/dir/?api=1&amp;destination={quote(d[3])}" rel="nofollow noopener">Directions</a></p></div>'
+    _c="railcard3 r2-src-mobile-hide" if slug in DROP_MHIDE else "railcard3"
+    return f'<div class="{_c}"><h2>{d[0]}</h2><p><strong>{d[1]}</strong></p><p class="small3">{d[2]}</p><p><a class="btn3 btn3-ghost btn3-full" href="https://www.google.com/maps/dir/?api=1&amp;destination={quote(d[3])}" rel="nofollow noopener">Directions</a></p></div>'
 # Hand-written at-a-glance summaries. Every value restates a rule already shown below on the page (from cities.py).
 G={
+"tampa":{"rows":[["Cost","Free once a year (S.W.E.E.P.); special pickups $18.12 per cubic yard"],["When","Your yearly S.W.E.E.P. date, set by the city (look it up by address)"],["Set-out time","No earlier than 5 days before, and by 8 p.m. on your Sunday S.W.E.E.P. date"],["Limits","One pile, 10 cubic yards or less; furniture and mattresses accepted"],["Drop-off","Free at McKay Bay Scale House with ID and a City of Tampa utility bill"]],"tel":[["813-274-8811","Call Solid Waste"],["813-242-5320","McKay Bay Scale House"]]},
 "tulsa":{"rows":[["Cost","$20 per 8 cubic yards (fee as of Oct 1, 2026); each extra 8 cubic yards is another $20"],["When","On your regular refuse day; book at least 3 days ahead"],["How to book","City Bulky Waste app, call 311, or email Tulsa311@cityoftulsa.org"],["Set-out time","By 5:00 a.m. on pickup day"],["Limits","Mattresses and sofas accepted; separate electronics, appliances, and tires"]],"tel":[["311","Call 311"],["Tulsa311@cityoftulsa.org","Email to schedule"]]},
 
 "fresno":dict(rows=[("Cost","Free, once a year, for City of Fresno trash customers"),("How to book","Call 311 or use the FresGO app. The city calls you back within 7 business days."),("Set-out time","No more than 36 hours before your date, and by 6:00 a.m. on the day"),("Limits","Single bulky items (couch, mattress, box spring). Larger loads: Operation Clean Up, up to 10 cubic yards"),("Drop-off","Free Dump Events at CARTS, 3457 S. Cedar Ave.")],
@@ -48,6 +55,7 @@ G={
   tel=[("311","Call 311"),("505-768-2000","From outside Albuquerque")]),
 }
 H={
+"tampa":["S.W.E.E.P. yearly pickup","Find your date","Setting it out","Pile size","Not accepted","Special pickups","McKay Bay Scale House","New Tampa and outside the city","Questions"],
 "tulsa":["Bulky Waste Pick Up","Fee","How to book","Setting it out","Also accepted","Not accepted","Canceling","Questions"],
 
 "fresno":["One-Time Bulky Item Pickup","How to book","Setting it out","Not taken, and second pickups","Operation Clean Up","Apartments (4+ units)","Free Dump Events","Questions"],
@@ -83,7 +91,8 @@ def glance(slug,src,agency,rules,warn):
         rows=f'<div class="g3-row"><dt>Start here</dt><dd>{first}</dd></div><div class="g3-row"><dt>Official page</dt><dd>{agency}</dd></div>'
     chip="".join(f'<p class="chip3">{d["html"]}</p>' for d in dated(slug))
     T=lambda n: "311" if n=="311" else re.sub(r"\D","",n)
-    btns=f'<a class="btn3 btn3-full" href="{src}" rel="nofollow">Book or read the official rules</a>'
+    _lbl,_href=BTN.get(slug,("Book or read the official rules",src))
+    btns=f'<a class="btn3 btn3-full" href="{_href}" rel="nofollow">{_lbl}</a>'
     if tel:
         n,lbl=tel[0]; main=lbl if (lbl.endswith(n) or n=="311") else f"{lbl}: {n}"
         sub="".join(f'<span class="tel3-sub">{l}: <a href="tel:{T(x)}">{x}</a></span>' for x,l in tel[1:])
