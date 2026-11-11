@@ -72,5 +72,14 @@
     "alt": "Photo of the downtown Tampa, Florida skyline over the Hillsborough River",
     "date": "2015-05-31 22:58:59",
     "same_license_note": true
+  },
+  "memphis": {
+    "name": "Memphis, TN skyline along the Mississippi River (cropped)",
+    "page": "https://commons.wikimedia.org/wiki/File:Memphis,_TN_skyline_along_the_Mississippi_River_(cropped).jpg",
+    "artist": "Quintin Soloviev",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "alt": "Photo of the downtown Memphis, Tennessee skyline along the Mississippi River",
+    "date": "2026-02-23 15:51:36"
   }
 }
