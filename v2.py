@@ -28,7 +28,7 @@ DROP={"fresno":("Free Dump Event drop-off","CARTS, 3457 S. Cedar Ave., Fresno, C
  "tampa":("Free drop-off for residents","McKay Bay Scale House, 114 South 34th Street, Tampa, FL","Bring ID and a City of Tampa utility bill in the same name.","114 South 34th Street, Tampa, FL 33605"),
  "long-beach":("24/7 mattress drop-off","970 W. Chester Place, Long Beach, CA","Free for residents.","970 W. Chester Place, Long Beach, CA")}
 # Per-city primary button overrides (label, official URL). Tampa: S.W.E.E.P. address lookup section on tampa.gov (checked 200, 2026-11-09).
-BTN={"memphis":("Look up your collection schedule","https://memphistn.gov/solid-waste/#collection-schedule"),"tampa":("Find your S.W.E.E.P. date","https://www.tampa.gov/solid-waste/programs/sweep#section-124381")}
+BTN={"colorado-springs":("Open the county Recycling Directory","https://communityresources.elpasoco.com/recyclables-program/recycling-directory-2027/"),"memphis":("Look up your collection schedule","https://memphistn.gov/solid-waste/#collection-schedule"),"tampa":("Find your S.W.E.E.P. date","https://www.tampa.gov/solid-waste/programs/sweep#section-124381")}
 # Drop-off cards hidden on mobile (same class/breakpoint as Tulsa's source card).
 DROP_MHIDE={"tampa","memphis"}
 def dropcard(slug):
@@ -49,6 +49,7 @@ def dropcard(slug):
     return f'<div class="{_c}"><h2>{d[0]}</h2><p><strong>{d[1]}</strong></p><p class="small3">{d[2]}</p><p><a class="btn3 btn3-ghost btn3-full" href="https://www.google.com/maps/dir/?api=1&amp;destination={quote(d[3])}" rel="nofollow noopener">Directions</a></p></div>'
 # Hand-written at-a-glance summaries. Every value restates a rule already shown below on the page (from cities.py).
 G={
+"colorado-springs":{"rows":[["City pickup","None listed. Trash goes through private haulers you sign up with."],["Cost","Set by your hauler; the city does not list a price"],["First step","Ask your hauler if it takes mattresses or couches, and how to book"],["Until pickup","Keep furniture inside or out of view in a rear yard (city code)"],["Drop-off","Private landfills and transfer stations; see the El Paso County Recycling Directory and call first"]],"tel":[["719-444-7891","Report a code issue"]]},
 "memphis":{"rows":[["Cost","Not stated by the city. Call 311 to confirm."],["How often","Twice a month, on your regular collection day (Outside the Cart)"],["Schedule","Look it up by address on the city's Solid Waste page"],["Set-out","Within 3 feet of the street, before crews pass your house"],["Let them know","Call 311 once items are at the curb"],["Limits","Piles up to 10 cubic yards; no construction or demolition debris"],["Drop-off","2 Convenience Centers, Fri&ndash;Sun 9 a.m.&ndash;3 p.m.; bring your latest MLGW bill and a picture ID"]],"tel":[["311","Call 311"],["901-636-6500","Memphis 311"]]},
 "tampa":{"rows":[["Cost","Free once a year (S.W.E.E.P.); special pickups $18.12 per cubic yard"],["When","Your yearly S.W.E.E.P. date, set by the city (look it up by address)"],["Set-out time","No earlier than 5 days before, and by 8 p.m. on your Sunday S.W.E.E.P. date"],["Limits","One pile, 10 cubic yards or less; furniture and mattresses accepted"],["Drop-off","Free at McKay Bay Scale House with ID and a City of Tampa utility bill"]],"tel":[["813-274-8811","Call Solid Waste"],["813-242-5320","McKay Bay Scale House"]]},
 "tulsa":{"rows":[["Cost","$20 per 8 cubic yards (fee as of Oct 1, 2026); each extra 8 cubic yards is another $20"],["When","On your regular refuse day; book at least 3 days ahead"],["How to book","City Bulky Waste app, call 311, or email Tulsa311@cityoftulsa.org"],["Set-out time","By 5:00 a.m. on pickup day"],["Limits","Mattresses and sofas accepted; separate electronics, appliances, and tires"]],"tel":[["311","Call 311"],["Tulsa311@cityoftulsa.org","Email to schedule"]]},
@@ -66,6 +67,7 @@ G={
   tel=[("311","Call 311"),("505-768-2000","From outside Albuquerque")]),
 }
 H={
+"colorado-springs":["No city bulky pickup","Ask your hauler","Until it is picked up","Neighborhood cleanups","Haul it yourself","Questions and reports"],
 "memphis":["Outside the Cart pickup","Find your schedule","Setting it out","Pile size","Not accepted","Convenience Centers","Landfill trips","Questions"],
 "tampa":["S.W.E.E.P. yearly pickup","Find your date","Setting it out","Pile size","Not accepted","Special pickups","McKay Bay Scale House","New Tampa and outside the city","Questions"],
 "tulsa":["Bulky Waste Pick Up","Fee","How to book","Setting it out","Also accepted","Not accepted","Canceling","Questions"],

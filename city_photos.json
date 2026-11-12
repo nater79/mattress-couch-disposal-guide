@@ -33,7 +33,7 @@
     "license": "CC BY 4.0",
     "license_url": "https://creativecommons.org/licenses/by/4.0/",
     "alt": "Photo of the downtown Houston skyline over Buffalo Bayou",
-    "date": "Taken on 16 September 2018, 17"
+    "date": "Taken on\u00a016 September 2018, 17"
   },
   "albuquerque": {
     "name": "Albuquerque, New Mexico skyline",
@@ -66,7 +66,7 @@
   "tampa": {
     "name": "Downtown Tampa, Florida",
     "page": "https://commons.wikimedia.org/wiki/File:Downtown_Tampa,_Florida.jpg",
-    "artist": "Clément Bardot",
+    "artist": "Cl\u00e9ment Bardot",
     "license": "CC BY-SA 4.0",
     "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
     "alt": "Photo of the downtown Tampa, Florida skyline over the Hillsborough River",
@@ -81,5 +81,14 @@
     "license_url": "https://creativecommons.org/licenses/by/4.0/",
     "alt": "Photo of the downtown Memphis, Tennessee skyline along the Mississippi River",
     "date": "2026-02-23 15:51:36"
+  },
+  "colorado-springs": {
+    "name": "Pikes Peak from the Garden of the Gods",
+    "page": "https://commons.wikimedia.org/wiki/File:Pikes_Peak_from_the_Garden_of_the_Gods.jpg",
+    "artist": "mark gallagher",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0/",
+    "alt": "Photo of snow-capped Pikes Peak behind the red rocks of Garden of the Gods in Colorado Springs, Colorado",
+    "date": "2006-03-23 07:30:55"
   }
 }
