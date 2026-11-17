@@ -1,6 +1,6 @@
 {
  "note": "City slugs allowed to show the Kit signup form. Rewritten by update_form_gate.py from verify_page --staged; a page gets a form only if it PASSES.",
- "updated": "2026-11-11",
+ "updated": "2026-11-16",
  "slugs": [
   "albuquerque",
   "austin",
@@ -8,6 +8,7 @@
   "boston",
   "charlotte",
   "chicago",
+  "columbus",
   "dallas",
   "denver",
   "el-paso",
@@ -16,6 +17,7 @@
   "jacksonville",
   "las-vegas",
   "los-angeles",
+  "louisville",
   "nashville",
   "new-york",
   "philadelphia",
@@ -24,6 +26,7 @@
   "san-antonio",
   "san-diego",
   "san-francisco",
+  "san-jose",
   "seattle",
   "washington-dc"
  ]
