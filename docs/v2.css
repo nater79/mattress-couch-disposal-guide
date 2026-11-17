@@ -62,6 +62,8 @@ main p,main li{max-width:68ch}
 .btn3:hover{color:#fff;background:#083a3f}
 .btn3-ghost{background:#fff;color:var(--dt);border:2px solid var(--dt)}.btn3-ghost:hover{background:#e9f4f4;color:var(--dt)}
 .chip3{display:inline-block;background:var(--sun);color:#3a2a00;font-weight:700;font-size:14px;padding:4px 12px;border-radius:999px;margin:0 0 8px}
+.chip3-callout{display:block;width:100%;box-sizing:border-box;border-radius:8px;text-align:left;padding:8px 12px}
+.chip3-callout a{color:#3a2a00;text-decoration:underline}
 .warn3,.city3 .check{background:var(--amb-bg);color:var(--amb-tx);border:1px solid #f0d58a;border-radius:10px;padding:12px 14px;margin:12px 0}
 .good3{background:#fff;border:1px solid var(--line);border-left:4px solid var(--sun);border-radius:var(--r);padding:16px 20px;margin:0 0 16px}
 /* rule blocks */
